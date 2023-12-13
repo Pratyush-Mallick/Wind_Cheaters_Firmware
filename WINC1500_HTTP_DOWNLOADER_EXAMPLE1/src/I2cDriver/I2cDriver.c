@@ -42,7 +42,7 @@ static int32_t I2cDriverConfigureSensorBus(void)
 	config_i2c_master.pinmux_pad0 = PINMUX_PA08C_SERCOM0_PAD0;
 	config_i2c_master.pinmux_pad1 = PINMUX_PA09C_SERCOM0_PAD1;
 	/* Change buffer timeout to something longer */
-	config_i2c_master.buffer_timeout = 1000;
+	config_i2c_master.buffer_timeout = 10000;
 	/* Initialize and enable device with config. Try three times to initialize */
 	
 	for(uint8_t i = I2C_INIT_ATTEMPTS; i != 0; i--){
@@ -156,10 +156,12 @@ void I2cDriverRegisterSensorBusCallbacks(void)
 	
 	int32_t error = STATUS_OK;
 
+
 	error = I2cDriverConfigureSensorBus();
 	if(STATUS_OK != error) goto exit;
 	
 	I2cDriverRegisterSensorBusCallbacks();
+	
 		
 	sensorI2cMutexHandle = xSemaphoreCreateMutex();
 	
@@ -428,10 +430,10 @@ int32_t I2cReadDataWait(I2C_Data *data, const TickType_t delay, const TickType_t
 	//---0. Get Mutex
 	error = I2cGetMutex(xMaxBlockTime);
 	if(ERROR_NONE != error) goto exit;
-
+	
 	//---1. Get Semaphore Handle
 	error = I2cGetSemaphoreHandle(&semHandle);
-	if(ERROR_NONE != error) goto exit;
+	if (ERROR_NONE != error) goto exit;
 	
 	//---2. Initiate sending data
 	error = I2cWriteData(data);
@@ -440,23 +442,20 @@ int32_t I2cReadDataWait(I2C_Data *data, const TickType_t delay, const TickType_t
 	}
 	
 	//---2. Wait for binary semaphore to tell us that we are done!
-	if (xSemaphoreTake(semHandle, xMaxBlockTime) == pdTRUE ) {
+	if (xSemaphoreTake(semHandle, xMaxBlockTime) == pdTRUE) {
 		/* The transmission ended as expected. We now delay until the I2C sensor is finished */
 		if (I2cGetTaskErrorStatus()) {
 			I2cSetTaskErrorStatus(false);
-			if(error != ERROR_NONE){
-				error = ERROR_I2C_HANG_RESET;
-				} else{
-				error = ERROR_ABORTED;
-			}
+			error = ERROR_ABORTED;
 			goto exitError0;
 		}
+		vTaskDelay(delay);
 		} else {
 		/* The call to ulTaskNotifyTake() timed out. */
 		error = ERR_TIMEOUT;
 		goto exitError0;
 	}
-
+	
 	//---6. Initiate Read data //TIP: SEE "I2cReadData", which is analogous to "I2cWriteData"
 	error = I2cReadData(data);
 	if (ERROR_NONE != error){

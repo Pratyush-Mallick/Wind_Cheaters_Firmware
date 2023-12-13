@@ -13,6 +13,7 @@
 #include "CliThread.h"
 #include "IMU\lsm6dso_reg.h"
 #include "SeesawDriver/Seesaw.h"
+#include "BME680/bme68x.h"
 
 /******************************************************************************
 * Defines
@@ -25,13 +26,15 @@
 static const int8_t * const pcWelcomeMessage =
 "FreeRTOS CLI.\r\nType Help to view a list of registered commands.\r\n";
 
+extern struct bme68x_dev bme;
+
 SemaphoreHandle_t cliCharReadySemaphore;		///<Semaphore to indicate that a character has been received
 
 
 static const CLI_Command_Definition_t xImuGetCommand =
 {
-	"imu",
-	"imu: Returns a value from the IMU\r\n",
+	"temp",
+	"temp: Returns a value from the temperature sensor\r\n",
 	CLI_GetImuData,
 	0
 };
@@ -44,15 +47,6 @@ static const CLI_Command_Definition_t xResetCommand =
 	CLI_ResetDevice,
 	0
 };
-
-static const CLI_Command_Definition_t xNeotrellisTurnLEDCommand =
-{
-	"led",
-	"led [keynum][R][G][B]: Sets the given LED to the given R,G,B values.\r\n",
-	CLI_NeotrellisSetLed,
-	4
-};
-
 
 
 //Clear screen command
@@ -86,7 +80,6 @@ void vCommandConsoleTask( void *pvParameters )
 FreeRTOS_CLIRegisterCommand( &xImuGetCommand );
 FreeRTOS_CLIRegisterCommand( &xClearScreen );
 FreeRTOS_CLIRegisterCommand( &xResetCommand );
-FreeRTOS_CLIRegisterCommand( &xNeotrellisTurnLEDCommand );
 
 uint8_t cRxedChar[2], cInputIndex = 0;
 BaseType_t xMoreDataToFollow;
@@ -288,32 +281,22 @@ void CliCharReadySemaphoreGiveFromISR(void)
 //Example CLI Command. Reads from the IMU and returns data.
 BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
 {
-static int16_t  data_raw_acceleration[3];
-static int16_t  data_raw_angular_rate;
-static float acceleration_mg[3];
-uint8_t reg;
-stmdev_ctx_t *dev_ctx = GetImuStruct();
+	int8_t rslt;
+	uint8_t n_fields;
+	uint8_t i = 0;
+	struct bme68x_data data[BME68X_N_MEAS] = { { 0 } };
+	//struct bme68x_dev t_dev;
 
+	rslt = bme68x_set_op_mode(BME68X_FORCED_MODE, &bme); /* Trigger a measurement */
 
-/* Read output only if new xl value is available */
-lsm6dso_xl_flag_data_ready_get(dev_ctx, &reg);
-
-if(reg){
-	memset(data_raw_acceleration, 0x00, 3 * sizeof(int16_t));
-	lsm6dso_acceleration_raw_get(dev_ctx, data_raw_acceleration);
-	acceleration_mg[0] =
-	lsm6dso_from_fs2_to_mg(data_raw_acceleration[0]);
-	acceleration_mg[1] =
-	lsm6dso_from_fs2_to_mg(data_raw_acceleration[1]);
-	acceleration_mg[2] =
-	lsm6dso_from_fs2_to_mg(data_raw_acceleration[2]);
-
-	snprintf(pcWriteBuffer,xWriteBufferLen, "Acceleration [mg]:X %d\tY %d\tZ %d\r\n",
-	(int)acceleration_mg[0], (int)acceleration_mg[1], (int)acceleration_mg[2]);
-}else
-{
-	snprintf(pcWriteBuffer,xWriteBufferLen, "No data ready! \r\n");
-}
+	/* Wait for the measurement to complete */
+	//t_dev.delay__us(BME68X_HEATR_DUR1_DELAY, t_dev.intf_ptr);
+	vTaskDelay(pdMS_TO_TICKS((uint32_t) 1000));
+	rslt = bme68x_get_data(BME68X_FORCED_MODE, &data[0], &n_fields, &bme);
+		    
+	sprintf(pcWriteBuffer,"Temp: %f  Hum: %f Press: %f \n", data->temperature, data->humidity, data->pressure);
+	//}
+	
 return pdFALSE;
 }
 
@@ -335,53 +318,5 @@ BaseType_t xCliClearTerminalScreen( char *pcWriteBuffer,size_t xWriteBufferLen,c
 BaseType_t CLI_ResetDevice( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
 {
 	system_reset();
-	return pdFALSE;
-}
-
-/**************************************************************************//**
-BaseType_t CLI_NeotrellisSetLed( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
-* @brief	CLI command to turn on a given LED to a given R,G,B, value
-* @param[out] *pcWriteBuffer. Buffer we can use to write the CLI command response to! See other CLI examples on how we use this to write back!
-* @param[in] xWriteBufferLen. How much we can write into the buffer
-* @param[in] *pcCommandString. Buffer that contains the complete input. You will find the additional arguments, if needed. Please see 
-https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_CLI/FreeRTOS_Plus_CLI_Implementing_A_Command.html#Example_Of_Using_FreeRTOS_CLIGetParameter
-Example 3
-                				
-* @return		Returns pdFALSE if the CLI command finished.
-* @note         Please see https://www.freertos.org/FreeRTOS-Plus/FreeRTOS_Plus_CLI/FreeRTOS_Plus_CLI_Accessing_Command_Line_Parameters.html
-				for more information on how to use the FreeRTOS CLI.
-
-*****************************************************************************/
-BaseType_t CLI_NeotrellisSetLed(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
-{
-	//snprintf(pcWriteBuffer,xWriteBufferLen, "Students to fill out!");
-
-	//Check code SeesawSetLed and SeesawSetLed
-	//How do you get parameters? check link in comments!
-	//Check that the input is sanitized: Key between 0-15, RGB between 0-255. Print if there is an error!
-	//return pdFalse to tell the FreeRTOS CLI your call is done and does not need to call again.
-	//This function expects 4 arguments inside pcCommandString: key, R, G, B.
-
-    uint8_t led_no, red, blue, green, count = 0;
-
-	pcCommandString +=4;
-
-	led_no = atoi(pcCommandString);
-
-	while (pcCommandString[count++] != ' ');
-
-	red = atoi(pcCommandString + count);
-
-	while (pcCommandString[count++] != ' ');
-
-	green = atoi(pcCommandString + count);
-	while (pcCommandString[count++] != ' ');
-
-	blue = atoi(pcCommandString + count);
-	
-    SeesawSetLed(NEO_TRELLIS_SEESAW_KEY(led_no), red, green, blue);
-
-	SeesawOrderLedUpdate();
-	
 	return pdFALSE;
 }

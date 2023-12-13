@@ -163,13 +163,13 @@ int8_t bme68x_init(struct bme68x_dev *dev)
 			/* No such register map for bm680.
 			 * Registers specific to bme688 */
             ///* Read Variant ID */
-            //rslt = read_variant_id(dev);
+            rslt = read_variant_id(dev);
 //
-            //if (rslt == BME68X_OK)
-            //{
-                ///* Get the Calibration data */
-                //rslt = get_calib_data(dev);
-            //}
+            if (rslt == BME68X_OK)
+            {
+                /* Get the Calibration data */
+                rslt = get_calib_data(dev);
+            }
 			rslt = BME68X_OK;
         }
         else
@@ -1253,21 +1253,21 @@ static int8_t read_field_data(uint8_t index, struct bme68x_data *data, struct bm
             data->status |= buff[14] & BME68X_HEAT_STAB_MSK;
         }
 
-        if ((data->status & BME68X_NEW_DATA_MSK) && (rslt == BME68X_OK))
-        {
-            rslt = bme68x_get_regs(BME68X_REG_RES_HEAT0 + data->gas_index, &data->res_heat, 1, dev);
-            if (rslt == BME68X_OK)
-            {
-                rslt = bme68x_get_regs(BME68X_REG_IDAC_HEAT0 + data->gas_index, &data->idac, 1, dev);
-            }
-
-            if (rslt == BME68X_OK)
-            {
-                rslt = bme68x_get_regs(BME68X_REG_GAS_WAIT0 + data->gas_index, &data->gas_wait, 1, dev);
-            }
-
-            if (rslt == BME68X_OK)
-            {
+        //if ((data->status & BME68X_NEW_DATA_MSK) && (rslt == BME68X_OK))
+        //{
+	        //rslt = bme68x_get_regs(BME68X_REG_RES_HEAT0 + data->gas_index, &data->res_heat, 1, dev);
+	        //if (rslt == BME68X_OK)
+	        //{
+		        //rslt = bme68x_get_regs(BME68X_REG_IDAC_HEAT0 + data->gas_index, &data->idac, 1, dev);
+	        //}
+//
+	        //if (rslt == BME68X_OK)
+	        //{
+		        //rslt = bme68x_get_regs(BME68X_REG_GAS_WAIT0 + data->gas_index, &data->gas_wait, 1, dev);
+	        //}
+//
+	        //if (rslt == BME68X_OK)
+	        //{
                 data->temperature = calc_temperature(adc_temp, dev);
                 data->pressure = calc_pressure(adc_pres, dev);
                 data->humidity = calc_humidity(adc_hum, dev);
@@ -1281,8 +1281,8 @@ static int8_t read_field_data(uint8_t index, struct bme68x_data *data, struct bm
                 }
 
                 break;
-            }
-        }
+            //}   //edited not wokring without commenting this.
+        //}
 
         if (rslt == BME68X_OK)
         {
@@ -1883,20 +1883,20 @@ I2C_Data Bme680Data; ///<Use me as a structure to communicate with the Gas Senso
  */
 BME68X_INTF_RET_TYPE bme68x_i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr)
 {
-    uint8_t device_addr = *(uint8_t*)intf_ptr;
+    //uint8_t device_addr = *(uint8_t*)intf_ptr;
 
-    (void)intf_ptr;
-	
+    //(void)intf_ptr;
+
 	uint8_t reg_add;
-	
+
 	Bme680Data.lenIn = len;
 	Bme680Data.msgIn = MsgOutBme680;
-	
+
 	reg_add = reg_addr;
 	Bme680Data.msgOut = &reg_add;
 	Bme680Data.lenOut = 1;
-	Bme680Data.address = device_addr;
-	
+	Bme680Data.address = BME68X_I2C_ADDR_HIGH;
+
 	I2cReadDataWait(&Bme680Data, 0, 1000);
 	memcpy(reg_data, MsgOutBme680, len);
 	
@@ -1908,7 +1908,7 @@ BME68X_INTF_RET_TYPE bme68x_i2c_read(uint8_t reg_addr, uint8_t *reg_data, uint32
  */
 BME68X_INTF_RET_TYPE bme68x_i2c_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr)
 {
-    uint8_t device_addr = *(uint8_t*)intf_ptr;
+    //uint8_t device_addr = *(uint8_t*)intf_ptr;
 
     (void)intf_ptr;
 	
@@ -1916,7 +1916,7 @@ BME68X_INTF_RET_TYPE bme68x_i2c_write(uint8_t reg_addr, const uint8_t *reg_data,
 	Bme680Data.lenOut = len+1; // accounting for register write byte as well.
 	Bme680Data.msgIn =  MsgOutBme680;
 	Bme680Data.msgOut = MsgOutBme680;
-	Bme680Data.address = device_addr;
+	Bme680Data.address = BME68X_I2C_ADDR_HIGH;
 	MsgOutBme680[0] = reg_addr;
 	
 	/* Copying data into buffer starting from 2nd byte */
