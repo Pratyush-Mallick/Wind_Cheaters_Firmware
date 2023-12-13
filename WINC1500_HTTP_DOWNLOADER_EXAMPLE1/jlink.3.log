@@ -1,9 +1,9 @@
-T2D3C 2128:914.120   SEGGER J-Link V7.92q Log File
-T2D3C 2128:914.155   DLL Compiled: Nov 23 2023 18:03:53
-T2D3C 2128:914.164   Logging started @ 2023-12-13 06:21
-T2D3C 2128:914.172   Process: C:\Program Files (x86)\Atmel\Studio\7.0\atbackend\atbackend.exe
-T2D3C 2128:914.181 - 54.507ms
-T2D3C 2128:919.645 JLINK_Close()
-T2D3C 2128:926.126 - 6.480ms
-T2D3C 2128:926.153   
-T2D3C 2128:926.161   Closed
+T2D34 3375:705.186   SEGGER J-Link V7.92q Log File
+T2D34 3375:705.261   DLL Compiled: Nov 23 2023 18:03:53
+T2D34 3375:705.274   Logging started @ 2023-12-13 07:26
+T2D34 3375:705.288   Process: C:\Program Files (x86)\Atmel\Studio\7.0\atbackend\atbackend.exe
+T2D34 3375:705.303 - 54.874ms
+T2D34 3375:710.392 JLINK_Close()
+T2D34 3375:718.763 - 8.369ms
+T2D34 3375:718.785   
+T2D34 3375:718.794   Closed

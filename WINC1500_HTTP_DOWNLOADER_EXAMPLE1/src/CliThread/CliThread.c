@@ -14,6 +14,7 @@
 #include "IMU\lsm6dso_reg.h"
 #include "SeesawDriver/Seesaw.h"
 #include "BME680/bme68x.h"
+#include "AirVelocity/FS_3000.h"
 
 /******************************************************************************
 * Defines
@@ -55,6 +56,14 @@ static const CLI_Command_Definition_t xResetCommand =
 	0
 };
 
+static const CLI_Command_Definition_t xAirFlow = 
+{
+	"air",
+	"air: Returns a value from FS-3000 airflow sensor\r\n", 
+	(const pdCOMMAND_LINE_CALLBACK)CLI_AirFlow, 
+	0
+};
+
 
 //Clear screen command
 const CLI_Command_Definition_t xClearScreen =
@@ -88,6 +97,7 @@ FreeRTOS_CLIRegisterCommand( &xTempGetCommand );
 FreeRTOS_CLIRegisterCommand( &xImuGetCommand );
 FreeRTOS_CLIRegisterCommand( &xClearScreen );
 FreeRTOS_CLIRegisterCommand( &xResetCommand );
+FreeRTOS_CLIRegisterCommand (&xAirFlow);
 
 uint8_t cRxedChar[2], cInputIndex = 0;
 BaseType_t xMoreDataToFollow;
@@ -302,7 +312,7 @@ BaseType_t CLI_GetTempData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const i
 	vTaskDelay(pdMS_TO_TICKS((uint32_t) 1000));
 	rslt = bme68x_get_data(BME68X_FORCED_MODE, &data[0], &n_fields, &bme);
 		    
-	sprintf(pcWriteBuffer,"Temp: %f  Hum: %f Press: %f \n", data->temperature, data->humidity, data->pressure);
+	sprintf(pcWriteBuffer, "Temp: %f  Hum: %f Press: %f \n", data->temperature, data->humidity, data->pressure);
 	
 	return pdFALSE;
 }
@@ -315,7 +325,6 @@ BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const in
 	static float acceleration_mg[3];
 	uint8_t reg  = 1;
 	stmdev_ctx_t *dev_ctx = GetImuStruct();
-
 
 	/* Read output only if new xl value is available */
 	//lsm6dso_xl_flag_data_ready_get(dev_ctx, &reg);
@@ -330,7 +339,7 @@ BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const in
 		acceleration_mg[2] =
 		lsm6dso_from_fs2_to_mg(data_raw_acceleration[2]);
 
-		snprintf(pcWriteBuffer,xWriteBufferLen, "Acceleration [mg]:X %d\tY %d\tZ %d\r\n",
+		snprintf(pcWriteBuffer, xWriteBufferLen, "Acceleration [mg]:X %d\tY %d\tZ %d\r\n",
 		(int)acceleration_mg[0], (int)acceleration_mg[1], (int)acceleration_mg[2]);
 	} else {
 		snprintf(pcWriteBuffer,xWriteBufferLen, "No data ready! \r\n");
@@ -356,5 +365,19 @@ BaseType_t xCliClearTerminalScreen( char *pcWriteBuffer,size_t xWriteBufferLen,c
 BaseType_t CLI_ResetDevice( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
 {
 	system_reset();
+	return pdFALSE;
+}
+
+/**************************************************************************/ /**
+ * @brief    Air Flow Command
+ * @param    p_cli 
+ ******************************************************************************/
+BaseType_t CLI_AirFlow(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	float air_speed = FS3000_readMetersPerSecond();
+	
+    sprintf(pcWriteBuffer, "Airflow: %0.2f m/s ", air_speed);
+	
+    //SerialConsoleWriteString(bufCli);
 	return pdFALSE;
 }

@@ -27,6 +27,7 @@
 #include "UiHandlerThread\UiHandlerThread.h"
 #include "BME680\bme68x.h"
 #include "SpiDriver\SpiDriver.h"
+#include "AirVelocity\FS_3000.h"
 
 /******************************************************************************
 * Defines and Types
@@ -132,6 +133,8 @@ void vApplicationDaemonTaskStartupHook(void)
 	} else {
 		SerialConsoleWriteString("Could not initialize IMU\r\n");
 	}
+	
+	FS3000_begin();
 	
 	StartTasks();
 

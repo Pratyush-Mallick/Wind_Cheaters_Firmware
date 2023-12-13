@@ -62,6 +62,7 @@ static int32_t I2cDriverConfigureSensorBus(void)
 	exit:
 	return error;
 }
+
 /******************************************************************************
 * Callback Functions
 ******************************************************************************/
@@ -107,8 +108,6 @@ void I2cSensorsRxComplete(struct i2c_master_module *const module){
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
-
-
 /**************************************************************************//**
  * @fn				void I2cSensorError(struct i2c_m_async_desc *const i2c)
  * @brief			Callback function for when the LED I2C bus encounters an error while transmitting/receiving
@@ -130,8 +129,6 @@ void I2cSensorsError(struct i2c_master_module *const module){
 	portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
 }
 
-
-
 void I2cDriverRegisterSensorBusCallbacks(void)
 {
 	/* Register callback function. */
@@ -144,7 +141,6 @@ void I2cDriverRegisterSensorBusCallbacks(void)
 	i2c_master_register_callback(&i2cSensorBusInstance, I2cSensorsError,I2C_MASTER_CALLBACK_ERROR);
 	i2c_master_enable_callback(&i2cSensorBusInstance,I2C_MASTER_CALLBACK_ERROR);
 }
-
 
 /**************************************************************************//**
  * @fn			int32_t I2cInitializeDriver(void)
@@ -177,12 +173,6 @@ void I2cDriverRegisterSensorBusCallbacks(void)
 	exit:
 	return error;		
 }
-
-
-
-
-
-
 
 /**************************************************************************//**
  * @fn    int32_t I2cWriteData(I2C_Data *data)
@@ -227,7 +217,6 @@ int32_t I2cWriteData(I2C_Data *data){
 	return error;
 }
 
-
 /**************************************************************************//**
  * @fn    int32_t I2cReadData(I2C_Data *data)
  * @brief       Function call to read an specified number of bytes on the given I2C bus
@@ -269,8 +258,6 @@ int32_t I2cReadData(I2C_Data *data){
 	exit:
 	return error;
 }
-
-
 
 /**************************************************************************//**
  * @fn			int32_t I2cFreeMutex(void)
@@ -317,7 +304,6 @@ static int32_t I2cGetSemaphoreHandle(SemaphoreHandle_t *handle){
 	return error;
 }
 
-
 /**************************************************************************//**
  * @fn			static uint8_t I2cGetTaskErrorStatus(I2C_Data *data)
  * @brief       Sets the error state of the latest I2C bus transaction for a given I2C data, which holds which physical I2C bus we are using.
@@ -340,7 +326,70 @@ static int32_t I2cGetSemaphoreHandle(SemaphoreHandle_t *handle){
  static void I2cSetTaskErrorStatus(uint8_t value){
 	sensorTransmitError = value;
  }
+ 
+ /**************************************************************************//**
+ * @fn			int32_t I2cOnlyReadWait(I2C_Data *data, const TickType_t delay, const TickType_t xMaxBlockTime)
+ * @brief       This is the main function to use to write data from an I2C device on a given I2C Bus. This function is blocking.
+ * @details     This function writes data from an I2C device, by writing the requested bytes.This function is blocking (bare-metal) or it
+				makes the current thread sleep until the I2C bus has finished the transaction (FREERTOS version).
+				On FreeRtos, this function gets the mutex for the respective I2C bus.
+ * @param[in]   data Pointer to I2C data structure which has all the information needed to send an I2C message
+ * @param[in]   delay Delay that the I2C device needs to return the response. Can be 0 if the response is ready instantly. It can be 
+				the delay an I2C device needs to make a measurement.
+ * @param[in]   xMaxBlockTime Maximum time for the thread to wait until the I2C mutex is free.
+ * @return      Returns an error message in case of error.
+ * @note        
+ *****************************************************************************/
+int32_t I2cOnlyReadWait(I2C_Data *data, const TickType_t xMaxBlockTime){
 
+	int32_t error = ERROR_NONE;
+	SemaphoreHandle_t semHandle = NULL;
+
+	//---0. Get Mutex
+	error = I2cGetMutex(xMaxBlockTime);
+	//error=0;
+	if(ERROR_NONE != error) goto exit;
+
+	//---1. Get Semaphore Handle
+	error = I2cGetSemaphoreHandle(&semHandle);
+	if(ERROR_NONE != error) goto exit;
+
+	//---6. Initiate Read data //TIP: SEE "I2cReadData", which is analogous to "I2cWriteData"
+	error = I2cReadData(data);
+	if (ERROR_NONE != error){
+		goto exitError0;
+	}
+	
+	//---2. Wait for binary semaphore to tell us that we are done!
+	if (xSemaphoreTake(semHandle, xMaxBlockTime) == pdTRUE ) {
+		/* The transmission ended as expected. We now delay until the I2C sensor is finished */
+		if (I2cGetTaskErrorStatus()) {
+			I2cSetTaskErrorStatus(false);
+			if(error != ERROR_NONE){
+				error = ERROR_I2C_HANG_RESET;
+				} else{
+				error = ERROR_ABORTED;
+			}
+			goto exitError0;
+		}
+		} else {
+		/* The call to ulTaskNotifyTake() timed out. */
+		error = ERR_TIMEOUT;
+		goto exitError0;
+	}
+
+	//---8. Release Mutex
+	error |= I2cFreeMutex();
+
+exit:
+return error;
+
+exitError0:
+error = I2cFreeMutex();
+
+return error;
+
+}
 
 
 /**************************************************************************//**
@@ -406,8 +455,6 @@ error = I2cFreeMutex();
 return error;
 
 }
-
-
 
 /**************************************************************************//**
  * @fn			int32_t I2cReadDataWait(I2C_Data *data, const TickType_t delay, const TickType_t xMaxBlockTime)
@@ -493,4 +540,3 @@ int32_t I2cReadDataWait(I2C_Data *data, const TickType_t delay, const TickType_t
 
 	return error;
 }
-

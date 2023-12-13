@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+src\AirVelocity\FS_3000.c
+
 src\ASF\common\services\crc32\crc32.c
 
 src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\i2c_master_interrupt.c

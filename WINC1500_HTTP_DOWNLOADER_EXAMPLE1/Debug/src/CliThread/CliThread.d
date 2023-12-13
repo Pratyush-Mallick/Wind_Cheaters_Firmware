@@ -212,7 +212,8 @@ src/CliThread/CliThread.d src/CliThread/CliThread.o: \
  ../src/IMU\lsm6dso_reg.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\math.h \
  ../src/SerialConsole/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
- ../src/BME680/bme68x.h ../src/BME680/bme68x_defs.h
+ ../src/BME680/bme68x.h ../src/BME680/bme68x_defs.h \
+ ../src/AirVelocity/FS_3000.h
 
 ../src/CliThread/CliThread.h:
 
@@ -663,3 +664,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/BME680/bme68x.h:
 
 ../src/BME680/bme68x_defs.h:
+
+../src/AirVelocity/FS_3000.h:

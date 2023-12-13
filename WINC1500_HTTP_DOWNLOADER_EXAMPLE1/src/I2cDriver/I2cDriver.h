@@ -80,9 +80,9 @@ typedef struct I2C_Data
 {
 	uint8_t address;	///<Address of the I2C device
 	const uint8_t *msgOut;		///<Pointer to array buffer that we will write from
-	uint8_t	*msgIn;		///<Pointer to array buffer that we will get message to
+	uint8_t	*msgIn;		     ///<Pointer to array buffer that we will get message to
 	uint16_t lenIn;			///<Length of message to read/write;
-	uint16_t lenOut;			///<Length of message to read/write;
+	uint16_t lenOut;	    ///<Length of message to read/write;
 	
 }I2C_Data;
 
@@ -99,6 +99,7 @@ typedef struct I2C_Bus_State
 	
 }I2C_Bus_State;
 
+int32_t I2cOnlyReadWait(I2C_Data *data, const TickType_t xMaxBlockTime);
 int32_t I2cReadDataWait(I2C_Data *data, const TickType_t delay, const TickType_t xMaxBlockTime);
 int32_t I2cWriteDataWait(I2C_Data *data, const TickType_t xMaxBlockTime);
 int32_t I2cGetMutex(TickType_t waitTime);
@@ -110,7 +111,6 @@ void I2cDriverRegisterSensorBusCallbacks(void);
 void I2cSensorsError(struct i2c_master_module *const module);
 void I2cSensorsRxComplete(struct i2c_master_module *const module);
 void I2cSensorsTxComplete(struct i2c_master_module *const module);
-
 
 
 #ifdef __cplusplus

@@ -225,7 +225,7 @@ src/main21.d src/main21.o: ../src/main21.c \
  ../src/SerialConsole/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
  ../src/IMU\lsm6dso_reg.h ../src/UiHandlerThread\UiHandlerThread.h \
  ../src/BME680\bme68x.h ../src/BME680\bme68x_defs.h \
- ../src/SpiDriver\SpiDriver.h
+ ../src/SpiDriver\SpiDriver.h ../src/AirVelocity\FS_3000.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\errno.h:
 
@@ -708,3 +708,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/BME680\bme68x_defs.h:
 
 ../src/SpiDriver\SpiDriver.h:
+
+../src/AirVelocity\FS_3000.h:
