@@ -14,7 +14,9 @@ src\I2cDriver\I2cDriver.c
 
 src\IMU\lsm6dso_reg.c
 
-src\SeesawDriver\SeesawDriver.c
+src\SerialConsole\SeesawDriver\SeesawDriver.c
+
+src\SpiDriver\SpiDriver.c
 
 src\UiHandlerThread\UiHandlerThread.c
 
@@ -141,8 +143,6 @@ src\ASF\sam0\drivers\sercom\sercom.c
 src\ASF\sam0\drivers\sercom\sercom_interrupt.c
 
 src\ASF\sam0\drivers\sercom\spi\spi.c
-
-src\ASF\sam0\drivers\sercom\spi\spi_interrupt.c
 
 src\ASF\sam0\drivers\sercom\usart\usart.c
 

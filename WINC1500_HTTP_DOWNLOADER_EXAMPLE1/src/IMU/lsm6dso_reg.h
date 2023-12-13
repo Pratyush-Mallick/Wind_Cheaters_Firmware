@@ -59,6 +59,8 @@ extern "C" {
 #define DRV_BIG_ENDIAN     __ORDER_BIG_ENDIAN__
 #define DRV_BYTE_ORDER     __BYTE_ORDER__
 
+#define SPI_READ_COMMAND     0x80
+
 #endif /* __BYTE_ORDER__*/
 #endif /* DRV_BYTE_ORDER */
 

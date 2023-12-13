@@ -195,10 +195,7 @@ src/UiHandlerThread/UiHandlerThread.d \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\xlocale.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\sys\string.h \
- ../src/config/conf_spi.h \
- ../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h \
- ../src/ASF/sam0/drivers/sercom/spi/spi.h \
- ../src/ASF/sam0/drivers/sercom/usart/usart.h \
+ ../src/config/conf_spi.h ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/common/services/sleepmgr/samd/sleepmgr.h \
@@ -213,8 +210,9 @@ src/UiHandlerThread/UiHandlerThread.d \
  ../src/ASF/sam0/drivers/tc/tc.h ../src/ASF/sam0/drivers/tcc/tcc.h \
  ../src/ASF/sam0/drivers/tcc/tcc_callback.h \
  ../src/ASF/sam0/drivers/tcc/tcc.h \
- ../src/UiHandlerThread/UiHandlerThread.h ../src/SeesawDriver/Seesaw.h \
- ../src/I2cDriver/I2cDriver.h ../src/SerialConsole/SerialConsole.h \
+ ../src/UiHandlerThread/UiHandlerThread.h \
+ ../src/SerialConsole/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
+ ../src/SerialConsole/SerialConsole.h \
  ../src/SerialConsole/circular_buffer.h ../src/main.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\errno.h:
@@ -619,10 +617,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/config/conf_spi.h:
 
-../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h:
-
-../src/ASF/sam0/drivers/sercom/spi/spi.h:
-
 ../src/ASF/sam0/drivers/sercom/usart/usart.h:
 
 ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h:
@@ -657,7 +651,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/UiHandlerThread/UiHandlerThread.h:
 
-../src/SeesawDriver/Seesaw.h:
+../src/SerialConsole/SeesawDriver/Seesaw.h:
 
 ../src/I2cDriver/I2cDriver.h:
 

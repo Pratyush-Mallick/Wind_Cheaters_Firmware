@@ -151,7 +151,7 @@ static int8_t analyze_sensor_data(const struct bme68x_data *data, uint8_t n_meas
 int8_t bme68x_init(struct bme68x_dev *dev)
 {
     int8_t rslt;
-
+	
     (void) bme68x_soft_reset(dev);
 
     rslt = bme68x_get_regs(BME68X_REG_CHIP_ID, &dev->chip_id, 1, dev);
@@ -179,6 +179,34 @@ int8_t bme68x_init(struct bme68x_dev *dev)
     }
 
     return rslt;
+}
+
+
+/*
+ * @brief This API writes default configurations for the our application
+ */
+int8_t bme68x_default_config(struct bme68x_dev *dev) {
+	
+	int8_t rslt;
+	
+	struct bme68x_conf conf;
+	struct bme68x_heatr_conf heatr_conf;
+
+	/* Set the temperature, pressure and humidity & filter settings */
+	conf.os_hum = BME68X_OS_1X;
+	conf.os_pres = BME68X_OS_16X;
+	conf.os_temp = BME68X_OS_2X;
+	
+	rslt = bme68x_set_conf(&conf, dev);
+	
+	/* Set the remaining gas sensor settings and link the heating profile */
+	heatr_conf.enable = BME68X_ENABLE;
+	heatr_conf.heatr_dur = BME68X_HEATR_DUR1;
+	heatr_conf.heatr_temp = BME68X_HIGH_TEMP;
+	
+	rslt = bme68x_set_heatr_conf(BME68X_FORCED_MODE, &heatr_conf, dev);
+	
+	return rslt;
 }
 
 /*

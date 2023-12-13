@@ -18,7 +18,9 @@
   */
 
 #include "lsm6dso_reg.h"
-#include "I2cDriver\I2cDriver.h"
+#include "spi.h"
+#include "conf_spi.h"
+//#include "I2cDriver\I2cDriver.h"
 #include <stddef.h>
 
 /**
@@ -13135,11 +13137,11 @@ static int32_t platform_write(void *handle, uint8_t reg, uint8_t *bufp, uint16_t
 static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len);
 
 
-
-stmdev_ctx_t dev_ctx = {.write_reg = platform_write, .read_reg = platform_read};
+static stmdev_ctx_t dev_ctx = {.write_reg = platform_write, .read_reg = platform_read};
+struct spi_slave_inst slave = {.ss_pin = SLAVE_SELECT_PIN, .address_enabled = false, .address = 0};
 
 uint8_t msgOutImu[64]; ///<USE ME AS A BUFFER FOR platform_write and platform_read
-I2C_Data imuData; ///<Use me as a structure to communicate with the IMU on platform_write and platform_read
+//I2C_Data imuData; ///<Use me as a structure to communicate with the IMU on platform_write and platform_read
 
 /**************************************************************************//**
  * @fn			static int32_t platform_write(void *handle, uint8_t reg, uint8_t *bufp,uint16_t len)
@@ -13159,15 +13161,25 @@ static int32_t platform_write(void *handle, uint8_t reg, uint8_t *bufp, uint16_t
 	//TIP: Use the array "msgOutImu" to copy the data to be sent. Remember that the position [0] of the array you send must be the register, and
 	//starting from position [1] you can copy the data to be sent. Remember to adjust the length accordingly
 
-	imuData.lenIn = 0;
-	imuData.lenOut = len+1; // accounting for register write byte as well.
-	imuData.msgIn =  msgOutImu;
-	imuData.msgOut = msgOutImu;
-	imuData.address = 0x6B;
-	msgOutImu[0] = reg;
+	//imuData.lenIn = 0;
+	//imuData.lenOut = len+1; // accounting for register write byte as well.
+	//imuData.msgIn =  msgOutImu;
+	//imuData.msgOut = msgOutImu;
+	//imuData.address = 0x6B;
+	//msgOutImu[0] = reg;
 	
-	memcpy(&msgOutImu[1], bufp, len);
-	return I2cWriteDataWait(&imuData, 100);
+	uint8_t reg_data = reg;
+	
+	//spi_select_slave((struct spi_module*) handle, &slave, true);
+	port_pin_set_output_level(SLAVE_SELECT_PIN, false);
+	spi_write_buffer_wait((struct spi_module*) handle, &reg_data, 1);
+	spi_write_buffer_wait((struct spi_module*) handle, bufp, len);
+	port_pin_set_output_level(SLAVE_SELECT_PIN, true);
+	//spi_select_slave((struct spi_module*) handle, &slave, false);
+	
+	return 0;
+	//memcpy(&msgOutImu[1], bufp, len);
+	//return I2cWriteDataWait(&imuData, 100);
 }
 
 /**************************************************************************//**
@@ -13182,7 +13194,7 @@ static int32_t platform_write(void *handle, uint8_t reg, uint8_t *bufp, uint16_t
  * @return      Returns what the function "I2cReadDataWait" returns
  * @note        STUDENTS TO FILL  
 *****************************************************************************/
-static  int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)
+static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len)
 {
 	//YOUR JOB: Fill out the structure "imuData" to send to the device
 	//TIP: Check the structure "imuData" and notice that it has a msgOut and msgIn parameter. How do we fill this to our advantage?
@@ -13190,39 +13202,57 @@ static  int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t
 	int32_t error;
 	uint8_t reg_add;
 	
-	imuData.lenIn = len;
-	imuData.msgIn = msgOutImu;
+	//imuData.lenIn = len;
+	//imuData.msgIn = msgOutImu;
+	//
+	//reg_add = reg;
+	//imuData.msgOut = &reg_add;
+	//imuData.lenOut = 1;
+	//imuData.address = 0x6B;
+	//
+	//error = I2cReadDataWait(&imuData, 0, 100);
+	//memcpy(bufp, msgOutImu, len);
 	
-	reg_add = reg;
-	imuData.msgOut = &reg_add;
-	imuData.lenOut = 1;
-	imuData.address = 0x6B;
+	uint8_t reg_data = reg | SPI_READ_COMMAND;
+	uint16_t dummy_data = 0;
 	
-	error = I2cReadDataWait(&imuData, 0, 100);
-	memcpy(bufp, msgOutImu, len);
+	//spi_select_slave((struct spi_module*) handle, &slave, true);
+	port_pin_set_output_level(SLAVE_SELECT_PIN, false);
+	spi_write_buffer_wait((struct spi_module*) handle, &reg_data, 1);
+	spi_read_buffer_wait((struct spi_module*) handle, bufp, len, dummy_data);
+	port_pin_set_output_level(SLAVE_SELECT_PIN, true);
+	//spi_select_slave((struct spi_module*) handle, &slave, false);
 	
-	return error;
+	return 0;
 }
 
 
 stmdev_ctx_t * GetImuStruct(void)
 {
-return &dev_ctx;
+ return &dev_ctx;
 }
 
 
 
 int32_t InitImu(void)
 {
-uint8_t rst;
-int32_t error = 0;
+	uint8_t rst;
+	int32_t error = 0;
+	uint8_t whoamI = 0;
+
+  /* Check device ID */
+  lsm6dso_device_id_get(&dev_ctx, &whoamI);
+  
+   if (whoamI != LSM6DSO_ID)
+		return -1;
+  
 /*
    * Restore default configuration
    */
-  error = lsm6dso_reset_set(&dev_ctx, PROPERTY_ENABLE);
-  do {
-    error |= lsm6dso_reset_get(&dev_ctx, &rst);
-  } while (rst);
+  //error = lsm6dso_reset_set(&dev_ctx, PROPERTY_ENABLE);
+  //do {
+    //error |= lsm6dso_reset_get(&dev_ctx, &rst);
+  //} while (rst);   // edited reset not working on the PCB
 
   /* Disable I3C interface */
   lsm6dso_i3c_disable_set(&dev_ctx, LSM6DSO_I3C_DISABLE);
@@ -13235,8 +13265,8 @@ int32_t error = 0;
    */
 
   /* Set Output Data Rate */
-  lsm6dso_xl_data_rate_set(&dev_ctx, LSM6DSO_XL_ODR_12Hz5);
-  lsm6dso_gy_data_rate_set(&dev_ctx, LSM6DSO_GY_ODR_12Hz5);
+  lsm6dso_xl_data_rate_set(&dev_ctx, LSM6DSO_XL_ODR_833Hz);  // edited change speed here
+  lsm6dso_gy_data_rate_set(&dev_ctx,  LSM6DSO_GY_ODR_833Hz);
   /* Set full scale */
   lsm6dso_xl_full_scale_set(&dev_ctx, LSM6DSO_2g);
   lsm6dso_gy_full_scale_set(&dev_ctx, LSM6DSO_2000dps);

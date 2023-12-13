@@ -193,10 +193,7 @@ src/main21.d src/main21.o: ../src/main21.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\xlocale.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\sys\string.h \
- ../src/config/conf_spi.h \
- ../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h \
- ../src/ASF/sam0/drivers/sercom/spi/spi.h \
- ../src/ASF/sam0/drivers/sercom/usart/usart.h \
+ ../src/config/conf_spi.h ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/common/services/sleepmgr/samd/sleepmgr.h \
@@ -225,9 +222,10 @@ src/main21.d src/main21.o: ../src/main21.c \
  ../src/ASF/common/components/wifi/winc1500/driver/source/nmdrv.h \
  ../src/CliThread/CliThread.h \
  ../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/FreeRTOS-Plus-CLI/FreeRTOS_CLI.h \
- ../src/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
+ ../src/SerialConsole/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
  ../src/IMU\lsm6dso_reg.h ../src/UiHandlerThread\UiHandlerThread.h \
- ../src/BME680\bme68x.h ../src/BME680\bme68x_defs.h
+ ../src/BME680\bme68x.h ../src/BME680\bme68x_defs.h \
+ ../src/SpiDriver\SpiDriver.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\errno.h:
 
@@ -631,10 +629,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/config/conf_spi.h:
 
-../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h:
-
-../src/ASF/sam0/drivers/sercom/spi/spi.h:
-
 ../src/ASF/sam0/drivers/sercom/usart/usart.h:
 
 ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h:
@@ -701,7 +695,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/FreeRTOS-Plus-CLI/FreeRTOS_CLI.h:
 
-../src/SeesawDriver/Seesaw.h:
+../src/SerialConsole/SeesawDriver/Seesaw.h:
 
 ../src/I2cDriver/I2cDriver.h:
 
@@ -712,3 +706,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/BME680\bme68x.h:
 
 ../src/BME680\bme68x_defs.h:
+
+../src/SpiDriver\SpiDriver.h:

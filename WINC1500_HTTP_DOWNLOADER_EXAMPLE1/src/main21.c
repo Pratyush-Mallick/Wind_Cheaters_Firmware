@@ -26,7 +26,7 @@
 #include "IMU\lsm6dso_reg.h"
 #include "UiHandlerThread\UiHandlerThread.h"
 #include "BME680\bme68x.h"
-
+#include "SpiDriver\SpiDriver.h"
 
 /******************************************************************************
 * Defines and Types
@@ -54,6 +54,9 @@ char bufferPrint[64]; //Buffer for daemon task
 /* Bme680 specific device descriptor */
 struct bme68x_dev bme;
 int8_t rslt;
+
+/* LSM6DSO SPI device descriptor */
+stmdev_ctx_t *dev_ctx;
 
 /**
  * \brief Main application function.
@@ -88,6 +91,8 @@ int main(void)
 *****************************************************************************/
 void vApplicationDaemonTaskStartupHook(void)
 {
+	 int result;
+	 
 	SerialConsoleWriteString("\r\n\r\n-----ESE516 Main Program-----\r\n");
 
 	/* Initialize HW that needs FreeRTOS Initialization */
@@ -103,46 +108,30 @@ void vApplicationDaemonTaskStartupHook(void)
      * Interface preference is updated as a parameter
      * For I2C : BME68X_I2C_INTF
      */
-    if (bme68x_interface_init(&bme, BME68X_I2C_INTF) != BME68X_OK) {
-		SerialConsoleWriteString("BME680 Interface Initialization Failed!\r\n");
-    }
+    result = bme68x_interface_init(&bme, BME68X_I2C_INTF);
+	result |= bme68x_init(&bme);
+	result |= bme68x_default_config(&bme);
 
-	if (bme68x_init(&bme) != BME68X_OK) {
-		SerialConsoleWriteString("BME680 Initial Reg read/write failed!\r\n");
+	if (result != BME68X_OK) {
+		SerialConsoleWriteString("BME680 Initial failed!\r\n");
+	} else{
+		SerialConsoleWriteString("BME680 Initialed Success!\r\n");
 	}
 	
-	struct bme68x_conf conf;
-	struct bme68x_heatr_conf heatr_conf;
+	/* Configure SPI for LSM6DSO */
+	configure_spi_master();
+	dev_ctx = GetImuStruct();
 		
-	//char buffer[20];
-	/* Set the temperature, pressure and humidity & filter settings */
-	conf.os_hum = BME68X_OS_1X;
-	conf.os_pres = BME68X_OS_16X;
-	conf.os_temp = BME68X_OS_2X;
-	
-	rslt = bme68x_set_conf(&conf, &bme);
+	/* Passing device specific handle. */
+	dev_ctx->handle = &spi_master_instance;
 
-	/* Set the remaining gas sensor settings and link the heating profile */
-	heatr_conf.enable = BME68X_ENABLE;
-	heatr_conf.heatr_dur = BME68X_HEATR_DUR1;
-	heatr_conf.heatr_temp = BME68X_HIGH_TEMP;
-		
-	rslt = bme68x_set_heatr_conf(BME68X_FORCED_MODE, &heatr_conf, &bme);
-	
 	/* Initialize the IMU LSM6DSO Sensor */
-	//uint8_t whoamI = 0;
-	//lsm6dso_device_id_get(GetImuStruct(), &whoamI);
-	//if (whoamI != LSM6DSO_ID){
-		//SerialConsoleWriteString("Cannot find IMU!\r\n");
-	//} else {
-		//SerialConsoleWriteString("IMU found!\r\n");
-		//if(InitImu() == 0)
-		//{
-			//SerialConsoleWriteString("IMU initialized!\r\n");
-		//} else {
-			//SerialConsoleWriteString("Could not initialize IMU\r\n");
-		//}
-	//}
+	if(InitImu() == 0)
+	{
+		SerialConsoleWriteString("IMU initialized!\r\n");
+	} else {
+		SerialConsoleWriteString("Could not initialize IMU\r\n");
+	}
 	
 	StartTasks();
 
@@ -163,25 +152,13 @@ snprintf(bufferPrint, 64, "Heap before starting tasks: %d\r\n", xPortGetFreeHeap
 SerialConsoleWriteString(bufferPrint);
 
 //Initialize Tasks here
-
 if (xTaskCreate(vCommandConsoleTask, "CLI_TASK", CLI_TASK_SIZE, NULL, CLI_PRIORITY, &cliTaskHandle) != pdPASS) {
 	SerialConsoleWriteString("ERR: CLI task could not be initialized!\r\n");
 }
 
 snprintf(bufferPrint, 64, "Heap after starting CLI: %d\r\n", xPortGetFreeHeapSize());
 SerialConsoleWriteString(bufferPrint);
-
-
-
-//if(xTaskCreate(vUiHandlerTask, "UI Task", UI_TASK_SIZE, NULL, UI_TASK_PRIORITY, &uiTaskHandle) != pdPASS) {
-	//SerialConsoleWriteString("ERR: UI task could not be initialized!\r\n");
-//}
-
-snprintf(bufferPrint, 64, "Heap after starting UI Task: %d\r\n", xPortGetFreeHeapSize());
-SerialConsoleWriteString(bufferPrint);
 }
-
-
 
 static void configure_console(void)
 {

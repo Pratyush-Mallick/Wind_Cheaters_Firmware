@@ -76,6 +76,12 @@ extern "C" {
  */
 int8_t bme68x_init(struct bme68x_dev *dev);
 
+
+/*
+ * @brief This API writes default configurations for the our application
+ */
+int8_t bme68x_default_config(struct bme68x_dev *dev);
+
 /**
  * \ingroup bme68x
  * \defgroup bme68xApiRegister Registers

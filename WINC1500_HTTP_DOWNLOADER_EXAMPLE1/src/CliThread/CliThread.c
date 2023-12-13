@@ -31,14 +31,21 @@ extern struct bme68x_dev bme;
 SemaphoreHandle_t cliCharReadySemaphore;		///<Semaphore to indicate that a character has been received
 
 
-static const CLI_Command_Definition_t xImuGetCommand =
+static const CLI_Command_Definition_t xTempGetCommand =
 {
 	"temp",
 	"temp: Returns a value from the temperature sensor\r\n",
-	CLI_GetImuData,
+	CLI_GetTempData,
 	0
 };
 
+static const CLI_Command_Definition_t xImuGetCommand =
+{
+	"imu",
+	"imu: Returns a value from the IMU\r\n",
+	CLI_GetImuData,
+	0
+};
 
 static const CLI_Command_Definition_t xResetCommand =
 {
@@ -77,6 +84,7 @@ void vCommandConsoleTask( void *pvParameters )
 {
 //REGISTER COMMANDS HERE
 
+FreeRTOS_CLIRegisterCommand( &xTempGetCommand );
 FreeRTOS_CLIRegisterCommand( &xImuGetCommand );
 FreeRTOS_CLIRegisterCommand( &xClearScreen );
 FreeRTOS_CLIRegisterCommand( &xResetCommand );
@@ -279,7 +287,7 @@ void CliCharReadySemaphoreGiveFromISR(void)
 * CLI Functions - Define here
 ******************************************************************************/
 //Example CLI Command. Reads from the IMU and returns data.
-BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
+BaseType_t CLI_GetTempData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
 {
 	int8_t rslt;
 	uint8_t n_fields;
@@ -295,11 +303,41 @@ BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const in
 	rslt = bme68x_get_data(BME68X_FORCED_MODE, &data[0], &n_fields, &bme);
 		    
 	sprintf(pcWriteBuffer,"Temp: %f  Hum: %f Press: %f \n", data->temperature, data->humidity, data->pressure);
-	//}
 	
-return pdFALSE;
+	return pdFALSE;
 }
 
+//Example CLI Command. Reads from the IMU and returns data.
+BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString )
+{
+	static int16_t  data_raw_acceleration[3];
+	static int16_t  data_raw_angular_rate;
+	static float acceleration_mg[3];
+	uint8_t reg  = 1;
+	stmdev_ctx_t *dev_ctx = GetImuStruct();
+
+
+	/* Read output only if new xl value is available */
+	//lsm6dso_xl_flag_data_ready_get(dev_ctx, &reg);
+
+	if (reg) {
+		memset(data_raw_acceleration, 0x00, 3 * sizeof(int16_t));
+		lsm6dso_acceleration_raw_get(dev_ctx, data_raw_acceleration);
+		acceleration_mg[0] =
+		lsm6dso_from_fs2_to_mg(data_raw_acceleration[0]);
+		acceleration_mg[1] =
+		lsm6dso_from_fs2_to_mg(data_raw_acceleration[1]);
+		acceleration_mg[2] =
+		lsm6dso_from_fs2_to_mg(data_raw_acceleration[2]);
+
+		snprintf(pcWriteBuffer,xWriteBufferLen, "Acceleration [mg]:X %d\tY %d\tZ %d\r\n",
+		(int)acceleration_mg[0], (int)acceleration_mg[1], (int)acceleration_mg[2]);
+	} else {
+		snprintf(pcWriteBuffer,xWriteBufferLen, "No data ready! \r\n");
+	}
+
+	return pdFALSE;
+}
 
 //THIS COMMAND USES vt100 TERMINAL COMMANDS TO CLEAR THE SCREEN ON A TERMINAL PROGRAM LIKE TERA TERM
 //SEE http://www.csie.ntu.edu.tw/~r92094/c++/VT100.html for more info

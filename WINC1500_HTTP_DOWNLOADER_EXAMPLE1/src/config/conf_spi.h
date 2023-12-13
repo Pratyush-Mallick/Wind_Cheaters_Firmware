@@ -3,7 +3,7 @@
  *
  * \brief SAM SPI configuration
  *
- * Copyright (c) 2016-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2013-2018 Microchip Technology Inc. and its subsidiaries.
  *
  * \asf_license_start
  *
@@ -30,6 +30,9 @@
  * \asf_license_stop
  *
  */
+/*
+ * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
+ */
 
 
 #ifndef CONF_SPI_H_INCLUDED
@@ -37,6 +40,15 @@
 
 #  define CONF_SPI_MASTER_ENABLE     true
 #  define CONF_SPI_SLAVE_ENABLE      false
+
+#define SLAVE_SELECT_PIN CONF_MASTER_SS_PIN
+#define CONF_MASTER_SPI_MODULE  SERCOM5
+#define CONF_MASTER_SS_PIN      PIN_PA17                     // PA_17
+#define CONF_MASTER_MUX_SETTING SPI_SIGNAL_MUX_SETTING_N     // Best setting for our pin configuration
+#define CONF_MASTER_PINMUX_PAD0 PINMUX_PB02D_SERCOM5_PAD0    // MOSI
+#define CONF_MASTER_PINMUX_PAD1 PINMUX_PB03D_SERCOM5_PAD1    // MISO can be on 1 and 3 only
+#define CONF_MASTER_PINMUX_PAD2 PINMUX_UNUSED                // Unused
+#define CONF_MASTER_PINMUX_PAD3 PINMUX_PA21C_SERCOM5_PAD3    // SCLK
 
 #endif /* CONF_SPI_H_INCLUDED */
 

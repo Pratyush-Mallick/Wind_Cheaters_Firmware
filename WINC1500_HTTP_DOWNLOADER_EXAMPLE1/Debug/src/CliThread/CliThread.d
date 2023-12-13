@@ -192,10 +192,7 @@ src/CliThread/CliThread.d src/CliThread/CliThread.o: \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\string.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\xlocale.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\sys\string.h \
- ../src/config/conf_spi.h \
- ../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h \
- ../src/ASF/sam0/drivers/sercom/spi/spi.h \
- ../src/ASF/sam0/drivers/sercom/usart/usart.h \
+ ../src/config/conf_spi.h ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h \
  ../src/ASF/sam0/drivers/sercom/usart/usart.h \
  ../src/ASF/common/services/sleepmgr/samd/sleepmgr.h \
@@ -214,7 +211,7 @@ src/CliThread/CliThread.d src/CliThread/CliThread.o: \
  ../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/FreeRTOS-Plus-CLI/FreeRTOS_CLI.h \
  ../src/IMU\lsm6dso_reg.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\math.h \
- ../src/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
+ ../src/SerialConsole/SeesawDriver/Seesaw.h ../src/I2cDriver/I2cDriver.h \
  ../src/BME680/bme68x.h ../src/BME680/bme68x_defs.h
 
 ../src/CliThread/CliThread.h:
@@ -617,10 +614,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/config/conf_spi.h:
 
-../src/ASF/sam0/drivers/sercom/spi/spi_interrupt.h:
-
-../src/ASF/sam0/drivers/sercom/spi/spi.h:
-
 ../src/ASF/sam0/drivers/sercom/usart/usart.h:
 
 ../src/ASF/sam0/drivers/sercom/usart/usart_interrupt.h:
@@ -663,7 +656,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-none-eabi\include\math.h:
 
-../src/SeesawDriver/Seesaw.h:
+../src/SerialConsole/SeesawDriver/Seesaw.h:
 
 ../src/I2cDriver/I2cDriver.h:
 
