@@ -1,0 +1,9 @@
+T575C 2873:330.909   SEGGER J-Link V7.92q Log File
+T575C 2873:330.946   DLL Compiled: Nov 23 2023 18:03:53
+T575C 2873:330.955   Logging started @ 2023-12-14 21:46
+T575C 2873:330.963   Process: C:\Program Files (x86)\Atmel\Studio\7.0\atbackend\atbackend.exe
+T575C 2873:330.972 - 63.934ms
+T575C 2873:336.294 JLINK_Close()
+T575C 2873:345.775 - 9.480ms
+T575C 2873:345.799   
+T575C 2873:345.807   Closed
