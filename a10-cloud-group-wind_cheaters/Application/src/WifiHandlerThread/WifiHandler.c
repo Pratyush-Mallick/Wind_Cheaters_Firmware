@@ -633,8 +633,12 @@ void SubscribeHandlerAutoma(MessageData *msgData)
 	LogMessage(LOG_DEBUG_LVL, "%.*s\r\n", msgData->topicName->lenstring.len, msgData->topicName->lenstring.data);
 	if (strncmp(msgData->message->payload, "1", 1) ==  0)
 	{
-		SerialConsoleWriteString("Automa Received\r\n");
-		port_pin_set_output_level(LED0, true);
+		SerialConsoleWriteString("Starting Wind Routine\r\n");
+		
+		//vTaskSuspendAll();
+		AutomateTurbine(120);
+		//xTaskResumeAll();
+		//port_pin_set_output_level(LED0, true);
 	}
 }
 
@@ -731,34 +735,28 @@ static void configure_mqtt(void)
 }
 
 // SETUP FOR EXTERNAL BUTTON INTERRUPT -- Used to send an MQTT Message
-
 void configure_extint_channel(void)
 {
     struct extint_chan_conf config_extint_chan;
     extint_chan_get_config_defaults(&config_extint_chan);
-    config_extint_chan.gpio_pin = BUTTON_0_EIC_PIN;
-    config_extint_chan.gpio_pin_mux = BUTTON_0_EIC_MUX;
+    config_extint_chan.gpio_pin = DEBUG_EIC_PIN;
+    config_extint_chan.gpio_pin_mux = DEBUG_EIC_MUX;
     config_extint_chan.gpio_pin_pull = EXTINT_PULL_UP;
     config_extint_chan.detection_criteria = EXTINT_DETECT_FALLING;
-    extint_chan_set_config(BUTTON_0_EIC_LINE, &config_extint_chan);
+    extint_chan_set_config(DEBUG_EIC_LINE, &config_extint_chan);
 }
 
 void extint_detection_callback(void);
 void configure_extint_callbacks(void)
 {
-    extint_register_callback(extint_detection_callback, BUTTON_0_EIC_LINE, EXTINT_CALLBACK_TYPE_DETECT);
-    extint_chan_enable_callback(BUTTON_0_EIC_LINE, EXTINT_CALLBACK_TYPE_DETECT);
+    extint_register_callback(extint_detection_callback, DEBUG_EIC_LINE, EXTINT_CALLBACK_TYPE_DETECT);
+    extint_chan_enable_callback(DEBUG_EIC_LINE, EXTINT_CALLBACK_TYPE_DETECT);
 }
 
 volatile bool isPressed = false;
 void extint_detection_callback(void)
 {
-    // Publish some data after a button press and release. Note: just an example! This is not the most elegant way of doing this!
-    temperature++;
-    if (temperature > 40) temperature = 1;
-    snprintf(mqtt_msg_temp, 63, "{\"d\":{\"temp\":%d}}", temperature);
-    isPressed = true;
-    // Published in the Wifi thread main loop
+	isPressed = true;
 }
 
 /**
@@ -877,9 +875,9 @@ static void MQTT_HandleTransactions(void)
 
 static void MQTT_HandleImuMessages(void)
 {
-    struct ImuDataPacket imuDataVar;
+    struct ImuDataPacket_float imuDataVar;
     if (pdPASS == xQueueReceive(xQueueImuBuffer, &imuDataVar, 0)) {
-        sprintf(mqtt_msg, "{\"X\":%0.2f, \"Y\": %0.2f, \"Z\": %0.2f}", imuDataVar.xmg, imuDataVar.ymg, imuDataVar.zmg);
+        sprintf(mqtt_msg, "{\"X\":%f, \"Y\":%f, \"Z\": %f}", imuDataVar.xmg, imuDataVar.ymg, imuDataVar.zmg);
         mqtt_publish(&mqtt_inst, IMU_TOPIC, mqtt_msg, strlen(mqtt_msg), 1, 0);
     }
 }
@@ -888,7 +886,7 @@ static void MQTT_HandleAirMessages(void)
 {
 	float air_data;
 	if (pdPASS == xQueueReceive(xQueueAirBuffer, &air_data, 0)) {
-		sprintf(mqtt_msg, "10");
+		sprintf(mqtt_msg, "%0.2f", air_data);
 		mqtt_publish(&mqtt_inst, AIR_TOPIC, mqtt_msg, strlen(mqtt_msg), 1, 0);
 	}
 }
@@ -918,7 +916,7 @@ void vWifiTask(void *pvParameters)
     init_state();
     // Create buffers to send data
     xQueueWifiState = xQueueCreate(5, sizeof(uint32_t));
-    xQueueImuBuffer = xQueueCreate(5, sizeof(struct ImuDataPacket));
+    xQueueImuBuffer = xQueueCreate(5, sizeof(struct ImuDataPacket_float));
     xQueueAirBuffer = xQueueCreate(2, sizeof(float));
     xQueueBmeBuffer = xQueueCreate(5, sizeof(struct bme68x_data));
 
@@ -927,6 +925,7 @@ void vWifiTask(void *pvParameters)
     }
 
     SerialConsoleWriteString("ESE516 - Wifi Init Code\r\n");
+	
     /* Initialize the Timer. */
     configure_timer();
 
@@ -1015,6 +1014,11 @@ void vWifiTask(void *pvParameters)
             //LogMessage(LOG_DEBUG_LVL, "MQTT send %s\r\n", mqtt_msg_temp);
             //isPressed = false;
         //}
+		
+		//if (isPressed && (down_state == COMPLETED)) {
+			//isPressed = false;
+			//update_fimware();
+		//}
 
         vTaskDelay(100);
     }
@@ -1037,7 +1041,7 @@ void WifiHandlerSetState(uint8_t state)
  * @note
 
 */
-int WifiAddImuDataToQueue(struct ImuDataPacket *imuPacket)
+int WifiAddImuDataToQueue(struct ImuDataPacket_float *imuPacket)
 {
     int error = xQueueSend(xQueueImuBuffer, imuPacket, (TickType_t)10);
     return error;

@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief common SPI configuration
+ * \brief SERCOM SPI master with vectored I/O driver configuration
  *
  * Copyright (c) 2013-2018 Microchip Technology Inc. and its subsidiaries.
  *
@@ -34,22 +34,25 @@
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
 
+#ifndef CONF_SPI_MASTER_VEC_H
+#define CONF_SPI_MASTER_VEC_H
 
-#ifndef CONF_SPI_H_INCLUDED
-#  define CONF_SPI_H_INCLUDED
+#if defined(__FREERTOS__) || defined(__DOXYGEN__)
+#  include <FreeRTOS.h>
+#  include <semphr.h>
 
-#  define CONF_SPI_MASTER_ENABLE     true
-#  define CONF_SPI_SLAVE_ENABLE      false
+#  define CONF_SPI_MASTER_VEC_OS_SUPPORT
+#  define CONF_SPI_MASTER_VEC_SEMAPHORE_TYPE                   xSemaphoreHandle
+#  define CONF_SPI_MASTER_VEC_CREATE_SEMAPHORE(semaphore)  \
+		vSemaphoreCreateBinary(semaphore)
+#  define CONF_SPI_MASTER_VEC_DELETE_SEMAPHORE(semaphore)  \
+		vSemaphoreDelete(semaphore)
+#  define CONF_SPI_MASTER_VEC_TAKE_SEMAPHORE(semaphore)  \
+		xSemaphoreTake((semaphore), portMAX_DELAY)
+#  define CONF_SPI_MASTER_VEC_GIVE_SEMAPHORE(semaphore)  \
+		xSemaphoreGive((semaphore))
+#  define CONF_SPI_MASTER_VEC_GIVE_SEMAPHORE_FROM_ISR(semaphore)  \
+		xSemaphoreGiveFromISR((semaphore), NULL)
+#endif
 
-#define SLAVE_SELECT_PIN        CONF_MASTER_SS_PIN
-#define CONF_MASTER_SPI_MODULE  SERCOM5
-#define CONF_MASTER_SS_PIN      PIN_PA17                     // PA_17
-#define CONF_MASTER_MUX_SETTING SPI_SIGNAL_MUX_SETTING_N     // Best setting for our pin configuration
-#define CONF_MASTER_PINMUX_PAD0 PINMUX_PB02D_SERCOM5_PAD0    // MOSI
-#define CONF_MASTER_PINMUX_PAD1 PINMUX_PB03D_SERCOM5_PAD1    // MISO can be on 1 and 3 only
-#define CONF_MASTER_PINMUX_PAD2 PINMUX_UNUSED                // Unused
-#define CONF_MASTER_PINMUX_PAD3 PINMUX_PA21C_SERCOM5_PAD3    // SCLK
-
-
-#endif /* CONF_SPI_H_INCLUDED */
-
+#endif // CONF_SPI_MASTER_VEC_H

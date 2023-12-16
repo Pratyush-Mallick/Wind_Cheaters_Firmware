@@ -13,8 +13,8 @@
 #include "FreeRTOS_CLI.h"
 
 
-#define CLI_TASK_SIZE	400		///<STUDENT FILL
-#define CLI_PRIORITY (configMAX_PRIORITIES - 1) ///<STUDENT FILL
+#define CLI_TASK_SIZE  400		///<STUDENT FILL
+#define CLI_PRIORITY (configMAX_PRIORITIES - 2) ///<STUDENT FILL
 #define CLI_TASK_DELAY 150	///STUDENT FILL
 
 #define MAX_INPUT_LENGTH_CLI    50	//STUDENT FILL
@@ -38,12 +38,11 @@ BaseType_t xCliClearTerminalScreen( char *pcWriteBuffer,size_t xWriteBufferLen,c
 #define CLI_CALLBACK_CLEAR_SCREEN		(pdCOMMAND_LINE_CALLBACK)xCliClearTerminalScreen
 #define CLI_PARAMS_CLEAR_SCREEN			0
 
-
 void vCommandConsoleTask( void *pvParameters );
 void CliCharReadySemaphoreGiveFromISR(void);
 
 BaseType_t CLI_GetImuData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_OTAU( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_AirFlow(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-BaseType_t CLI_ResetDevice( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
 BaseType_t CLI_GetTempData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString );
+void update_fimware(void);

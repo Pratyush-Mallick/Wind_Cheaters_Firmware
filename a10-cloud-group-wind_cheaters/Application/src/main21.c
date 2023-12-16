@@ -74,6 +74,43 @@ int8_t rslt;
 /* LSM6DSO SPI device descriptor */
 stmdev_ctx_t *dev_ctx;
 
+void app_gpio_config(void) 
+{
+	/* Get default config for led */
+	struct port_config led_port_pin;
+	port_get_config_defaults(&led_port_pin);
+	
+	led_port_pin.direction = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(LED_0_PIN, &led_port_pin);
+	
+	struct port_config dir_port_pin;
+	port_get_config_defaults(&dir_port_pin);
+	
+	dir_port_pin.direction = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(DIRECTION, &dir_port_pin);
+	
+	struct port_config step_port_pin;
+	port_get_config_defaults(&step_port_pin);
+	
+	step_port_pin.direction = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(STEP, &step_port_pin);
+	
+	//// get the number of steps
+	//int steps = ((float) 180 / 1.8);
+	////set the direction and make sure the motor rotate in different directions each time
+	//port_pin_set_output_level(DIRECTION, (bool)1);
+	//// rotate the motor
+	//for(int i=0; i<steps;i++){
+		//// get data from air velocity sensor here and store in AirVelocit
+//
+		//// move the stepper motor the next angle
+		//port_pin_set_output_level(STEP,(bool)1);
+		//delay_ms(50);
+		//port_pin_set_output_level(STEP,(bool)0);
+		//delay_ms(50);
+	//}
+}
+
 /**
  * @brief Main application function.
  * Application entry point.
@@ -86,6 +123,8 @@ int main(void)
 
     /* Initialize the UART console. */
     InitializeSerialConsole();
+	
+	app_gpio_config();
 
     // Initialize trace capabilities
     vTraceEnable(TRC_START);
@@ -108,7 +147,7 @@ void vApplicationDaemonTaskStartupHook(void)
 {
 	int result;
 	
-    SerialConsoleWriteString("\r\n\r\n-----ESE516 Main Program-----\r\n");
+    SerialConsoleWriteString("\r\n\r\n----- Wind Cheaters: V2 -----\r\n");
 
     // Initialize HW that needs FreeRTOS Initialization
     SerialConsoleWriteString("\r\n\r\nInitialize HW...\r\n");
@@ -126,14 +165,14 @@ void vApplicationDaemonTaskStartupHook(void)
      * For I2C : BME68X_I2C_INTF
      */
     result = bme68x_interface_init(&bme, BME68X_I2C_INTF);
-	result |= bme68x_init(&bme);
-	result |= bme68x_default_config(&bme);
+    result |= bme68x_init(&bme);
+    result |= bme68x_default_config(&bme);
 
-	if (result != BME68X_OK) {
-		SerialConsoleWriteString("BME680 Initial failed!\r\n");
+    if (result != BME68X_OK) {
+	    SerialConsoleWriteString("BME680 Initial failed!\r\n");
 	} else{
-		SerialConsoleWriteString("BME680 Initialed Success!\r\n");
-	}
+	    SerialConsoleWriteString("BME680 Initialed Success!\r\n");
+    }
 	
 	/* Configure SPI for LSM6DSO */
 	configure_spi_master();
@@ -142,23 +181,14 @@ void vApplicationDaemonTaskStartupHook(void)
 	/* Passing device specific handle. */
 	dev_ctx->handle = &spi_master_instance;
 
-    uint8_t whoamI = 0;
-    (lsm6dso_device_id_get(dev_ctx, &whoamI));
-
-    if (whoamI != LSM6DSO_ID) {
-        SerialConsoleWriteString("Cannot find IMU!\r\n");
-    } else {
-        SerialConsoleWriteString("IMU found!\r\n");
-        if (InitImu() == 0) {
-            SerialConsoleWriteString("IMU initialized!\r\n");
-        } else {
-            SerialConsoleWriteString("Could not initialize IMU\r\n");
-        }
+    if (InitImu() == 0) {
+	    SerialConsoleWriteString("IMU initialized!\r\n");
+	} else {
+	    SerialConsoleWriteString("Could not initialize IMU\r\n");
     }
 	
 	FS3000_begin();
-	
-	//Initialize PIN PB02 as an output pin for GPIO profiling.
+
     StartTasks();
 
     vTaskSuspend(daemonTaskHandle);
@@ -190,9 +220,20 @@ static void StartTasks(void)
     snprintf(bufferPrint, 64, "Heap after starting WIFI: %d\r\n", xPortGetFreeHeapSize());
     SerialConsoleWriteString(bufferPrint);
 	
-	//if (xTaskCreate(vImuTask, "ACCEL_TASK", WIFI_TASK_SIZE, NULL, WIFI_PRIORITY, &accelTaskHandle) != pdPASS) {
+	if (xTaskCreate(vImuTask, "ACCEL_TASK", IMU_TASK_SIZE, NULL, AIR_TASK_PRIORITY, &accelTaskHandle) != pdPASS) {
 		//SerialConsoleWriteString("ERR: WIFI task could not be initialized!\r\n");
-	//}
+	}
+	
+	snprintf(bufferPrint, 64, "Heap after starting IMU: %d\r\n", xPortGetFreeHeapSize());
+	SerialConsoleWriteString(bufferPrint);
+	
+	if (xTaskCreate(vBmeTask, "TEMP_TASK", BME_TASK_SIZE, NULL, BME_TASK_PRIORITY, &bmeTaskHandle) != pdPASS) {
+		//SerialConsoleWriteString("ERR: WIFI task could not be initialized!\r\n");
+	}
+	
+	snprintf(bufferPrint, 64, "Heap after starting BME: %d\r\n", xPortGetFreeHeapSize());
+	SerialConsoleWriteString(bufferPrint);
+		
 	//
 	//snprintf(bufferPrint, 64, "Heap after starting Accelerometer: %d\r\n", xPortGetFreeHeapSize());
 	//SerialConsoleWriteString(bufferPrint);
@@ -207,9 +248,6 @@ static void StartTasks(void)
 	//if (xTaskCreate(vBmeTask, "BME680_TASK", WIFI_TASK_SIZE, NULL, WIFI_PRIORITY, &bmeTaskHandle) != pdPASS) {
 		//SerialConsoleWriteString("ERR: WIFI task could not be initialized!\r\n");
 	//}
-
-	snprintf(bufferPrint, 64, "Heap after starting BME680: %d\r\n", xPortGetFreeHeapSize());
-	SerialConsoleWriteString(bufferPrint);
 }
 
 

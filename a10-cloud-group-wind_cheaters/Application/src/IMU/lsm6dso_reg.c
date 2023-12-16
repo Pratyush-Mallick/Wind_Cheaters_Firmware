@@ -13246,10 +13246,10 @@ int32_t InitImu(void)
    if (whoamI != LSM6DSO_ID)
 		return -1;
   
-/*
+  /*
    * Restore default configuration
    */
-  //error = lsm6dso_reset_set(&dev_ctx, PROPERTY_ENABLE);
+  error = lsm6dso_reset_set(&dev_ctx, PROPERTY_ENABLE);
   //do {
     //error |= lsm6dso_reset_get(&dev_ctx, &rst);
   //} while (rst);   // edited reset not working on the PCB
@@ -13259,7 +13259,7 @@ int32_t InitImu(void)
   /* Enable Block Data Update */
   lsm6dso_block_data_update_set(&dev_ctx, PROPERTY_ENABLE);
   /* Weight of XL user offset to 2^(-10) g/LSB */
-  lsm6dso_xl_offset_weight_set(&dev_ctx, LSM6DSO_LSb_1mg);
+  lsm6dso_xl_offset_weight_set(&dev_ctx, LSM6DSO_LSb_16mg);  //1 msg
   /* Accelerometer X,Y,Z axis user offset correction expressed
    * in two’s complement. Set X to 48mg, Y tp 64 mg, Z to -127 mg
    */
@@ -13269,11 +13269,11 @@ int32_t InitImu(void)
   lsm6dso_gy_data_rate_set(&dev_ctx,  LSM6DSO_GY_ODR_833Hz);
   /* Set full scale */
   lsm6dso_xl_full_scale_set(&dev_ctx, LSM6DSO_2g);
-  lsm6dso_gy_full_scale_set(&dev_ctx, LSM6DSO_2000dps);
+  lsm6dso_gy_full_scale_set(&dev_ctx, LSM6DSO_500dps);
   /* Configure filtering chain(No aux interface). */
   /* Accelerometer - LPF1 + LPF2 path */
-  lsm6dso_xl_hp_path_on_out_set(&dev_ctx, LSM6DSO_LP_ODR_DIV_100);
-  lsm6dso_xl_filter_lp2_set(&dev_ctx, PROPERTY_ENABLE);
+  //lsm6dso_xl_hp_path_on_out_set(&dev_ctx, LSM6DSO_LP_ODR_DIV_100);
+  //lsm6dso_xl_filter_lp2_set(&dev_ctx, PROPERTY_ENABLE);
 
   return error;
 }

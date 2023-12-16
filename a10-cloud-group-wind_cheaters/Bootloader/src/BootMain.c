@@ -68,7 +68,7 @@ char testB_file_name[] = "0:FlagB.txt";	///<Test TEXT File name
 char testB_bin_file[] = "0:TestB.bin";	///<Test BINARY File name
 
 char boot_file_name[] ="0:boot_flag.txt";
-char boot_bin_file[] = "0:TestB.bin";
+char boot_bin_file[] = "0:Application.bin";
 
 /******************************************************************************/
 
@@ -101,8 +101,8 @@ FRESULT nvm_update(uint32_t row_no, uint32_t bytes_to_read)
 		char *a = (char *)(APP_START_ADDRESS + row_no*NVM_ROW_FACTOR + iter); //Pointer pointing to address APP_START_ADDRESS
 		if(*a != 0xFF)
 		{
-		SerialConsoleWriteString("Error - test page is not erased!");
-		break;
+			SerialConsoleWriteString("Error - test page is not erased!");
+			break;
 		}
 	}
 
@@ -223,61 +223,57 @@ SerialConsoleWriteString("ESE516 - ENTER BOOTLOADER");	//Order to add string to 
 	/*3.) STARTS BOOTLOADER HERE!*/
 	uint8_t readBuffer[256]; //Buffer the size of one row
 
-	resA = f_open(&file_object_A, (char const *)testA_file_name, FA_READ);
-	boot_res = f_open(&file_object_boot, (char const *)boot_file_name, FA_READ);
-	
-	// Checking if the the flag txt files are present.
-	resA = f_open(&file_object_A, (char const *)testA_file_name, FA_READ);
+	//resA = f_open(&file_object_A, (char const *)testA_file_name, FA_READ);
+	//boot_res = f_open(&file_object_boot, (char const *)boot_file_name, FA_READ);
+	//
+	//// Checking if the the flag txt files are present.
+	//resA = f_open(&file_object_A, (char const *)testA_file_name, FA_READ);
 	boot_res = f_open(&file_object_boot, (char const *)boot_file_name, FA_READ);
 
-	//if (boot_res == FR_OK) {
-		//f_unlink(boot_file_name);
-		//SerialConsoleWriteString("Found boot flag !\r\n");
-	//}
-//
-	//if (resA == FR_OK) {
-		//// Now that, we found `FlagA.txt` we can delete it.
-		//f_unlink(testA_file_name);
-		//SerialConsoleWriteString("found test A flag !\r\n");
-	//}
-//
+	if (boot_res == FR_OK) {
+		f_unlink(boot_file_name);
+		SerialConsoleWriteString("Found boot flag !\r\n Now Updating firmware \r\n");
+	}
+
 	//// We flash file only if it was download properly.
-	//if (resA == FR_OK && boot_res == FR_OK) {
-		//boot_bin_file[0] = LUN_ID_SD_MMC_0_MEM + '0';
-		//if(f_open(&file_object, (char const *)boot_bin_file, FA_READ) != FR_OK) {
-			//SerialConsoleWriteString("Couldn't find the file !\r\n");
-			//goto exit_boot;
-		//}
-		//
-		//// Calculating the multiple of read/write for the files.
-		//int loop_factor = file_object.fsize / 256;
-		//int remaining_data = file_object.fsize % 256;
-		//
-		//for(int iter = 0; iter < loop_factor; iter++)
-		//{
-			//res = nvm_update(iter, NVM_ROW_FACTOR);
-		//}
-		//
-		//if (remaining_data) {
-			//res = nvm_update(loop_factor, NVM_ROW_FACTOR);
-		//}
-//
-		//if (res != FR_OK)
-		//{
-			//SerialConsoleWriteString("Test write to NVM failed!\r\n");
-		//} else {
-			//SerialConsoleWriteString("Test write to NVM succeeded!\r\n");
-		//}
-	//}
+	if (boot_res == FR_OK) {
+		boot_bin_file[0] = LUN_ID_SD_MMC_0_MEM + '0';
+		if(f_open(&file_object, (char const *)boot_bin_file, FA_READ) != FR_OK) {
+			SerialConsoleWriteString("Couldn't find the file !\r\n");
+			goto exit_boot;
+		}
+		
+		// Calculating the multiple of read/write for the files.
+		int loop_factor = file_object.fsize / 256;
+		int remaining_data = file_object.fsize % 256;
+		
+		for(int iter = 0; iter < loop_factor; iter++)
+		{
+			res = nvm_update(iter, NVM_ROW_FACTOR);
+		}
+		
+		if (remaining_data) {
+			res = nvm_update(loop_factor, NVM_ROW_FACTOR);
+		}
+
+		if (res != FR_OK)
+		{
+			SerialConsoleWriteString("Test write to NVM failed!\r\n");
+		} else {
+			SerialConsoleWriteString("Test write to NVM succeeded!\r\n");
+		}
+		
+		SerialConsoleWriteString("Update Complete! \r\n");
+	}
 
 	/*END BOOTLOADER HERE!*/
 
 exit_boot:
 	f_unlink(boot_file_name);
 	f_unlink(boot_bin_file);
-	f_unlink(testA_file_name);
+	
 	//4.) DEINITIALIZE HW AND JUMP TO MAIN APPLICATION!
-	SerialConsoleWriteString("ESE516 - EXIT BOOTLOADER");	//Order to add string to TX Buffer
+	SerialConsoleWriteString("ESE516 - EXIT BOOTLOADER\r\n");	//Order to add string to TX Buffer
 	delay_cycles_ms(100); //Delay to allow print
 
 	//Deinitialize HW - deinitialize started HW here!
@@ -292,16 +288,9 @@ exit_boot:
 }
 
 
-
-
-
-
-
 /******************************************************************************
 * Static Functions
 ******************************************************************************/
-
-
 
 /**************************************************************************//**
 * function      static void StartFilesystemAndTest()

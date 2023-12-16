@@ -27,6 +27,8 @@ extern "C" {
 #include "BME680/Bme680Thread.h"
 #include "AirVelocity/AirThread.h"
 #include "IMU/ImuThread.h"
+#include "Stepper_control/A4988_StepperMD.h"
+#include "CliThread/CliThread.h"
 
 /******************************************************************************
  * Defines
@@ -37,8 +39,8 @@ extern "C" {
 #define WIFI_DOWNLOAD_INIT 2    ///< State for Wifi handler to Initialize Download Connection
 #define WIFI_DOWNLOAD_HANDLE 3  ///< State for Wifi handler to Handle Download Connection
 
-#define WIFI_TASK_SIZE 1000
-#define WIFI_PRIORITY (configMAX_PRIORITIES - 2)
+#define WIFI_TASK_SIZE 1000     //edited working with 800 //1000 
+#define WIFI_PRIORITY (configMAX_PRIORITIES - 3)
 
 /** Wi-Fi AP Settings. */
 // Note: you can register your WiFi PCBAs with AirPennNet-Device and use the credentials below to connect to the internet:
@@ -46,6 +48,10 @@ extern "C" {
 #define MAIN_WLAN_SSID "Detkin IOT North"  /**< Destination SSID. Change to your WIFI SSID */
 #define MAIN_WLAN_AUTH M2M_WIFI_SEC_WPA_PSK /**< Security manner */
 #define MAIN_WLAN_PSK "n0rthC0untry"        /**< Password for Destination SSID. Change to your password. Please dont hack my WiFi router */
+
+//#define MAIN_WLAN_SSID "Honest46211_2G"  /**< Destination SSID. Change to your WIFI SSID */
+//#define MAIN_WLAN_AUTH M2M_WIFI_SEC_WPA_PSK /**< Security manner */
+//#define MAIN_WLAN_PSK "slowotter21"        /**< Password for Destination SSID. Change to your password. Please dont hack my WiFi router */
 
 //#define MAIN_WLAN_SSID "AirPennNet-Device"  /**< Destination SSID. Change to your WIFI SSID */
 //#define MAIN_WLAN_AUTH M2M_WIFI_SEC_WPA_PSK /**< Security manner */
@@ -56,7 +62,7 @@ extern "C" {
 
 /** Content URI for download. */
 //#define MAIN_HTTP_FILE_URL "http://ww1.microchip.com/downloads/en/DeviceDoc/70005266B.pdf" ///< Change me to the URL to download your OTAU binary file from!
-#define MAIN_HTTP_FILE_URL "http://172.178.45.14/TestB.bin"
+#define MAIN_HTTP_FILE_URL "http://172.178.45.14/Application.bin"
 
 /** Maximum size for packet buffer. */
 #define MAIN_BUFFER_MAX_SIZE (512)
@@ -85,17 +91,29 @@ struct ImuDataPacket {
     int16_t zmg;
 };
 
-// Structure to hold a game packet
-struct GameDataPacket {
-    uint8_t game[GAME_SIZE];
+struct ImuDataPacket_float {
+	float xmg;
+	float ymg;
+	float zmg;
 };
 
-// Structure to hold an RGB LED Color packet
-struct RgbColorPacket {
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
-};
+#define DEBUG_PIN                   PIN_PA10
+#define DEBUG_ACTIVE                false
+#define DEBUG_INACTIVE              !DEBUG_ACTIVE
+#define DEBUG_EIC_PIN               PIN_PA10A_EIC_EXTINT10
+#define DEBUG_EIC_MUX                MUX_PA10A_EIC_EXTINT10
+#define DEBUG_EIC_PINMUX            PINMUX_PA10A_EIC_EXTINT10
+#define DEBUG_EIC_LINE              10
+
+/* Debugging button */
+//#define BUTTON_0_NAME             "Debug"
+//#define BUTTON_0_PIN              DEBUG_PIN
+//#define BUTTON_0_ACTIVE           DEBUG_ACTIVE
+//#define BUTTON_0_INACTIVE         DEBUG_INACTIVE
+//#define BUTTON_0_EIC_PIN          DEBUG_EIC_PIN
+//#define BUTTON_0_EIC_MUX          DEBUG_EIC_MUX
+//#define BUTTON_0_EIC_PINMUX       DEBUG_EIC_PINMUX
+//#define BUTTON_0_EIC_LINE         DEBUG_EIC_LINE
 
 /* Max size of UART buffer. */
 #define MAIN_CHAT_BUFFER_SIZE 64
@@ -169,7 +187,7 @@ void vWifiTask(void *pvParameters);
 void init_storage(void);
 void WifiHandlerSetState(uint8_t state);
 int WifiAddDistanceDataToQueue(uint16_t *distance);
-int WifiAddImuDataToQueue(struct ImuDataPacket *imuPacket);
+int WifiAddImuDataToQueue(struct ImuDataPacket_float *imuPacket);
 int WifiAddAirDataToQueue(float *air_ms);
 int WifiAddBmeDataToQueue(struct bme68x_data *bmePacket);
 

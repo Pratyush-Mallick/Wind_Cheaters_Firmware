@@ -40,7 +40,7 @@ void configure_spi_master(void)
 	config_spi_master.pinmux_pad3 = CONF_MASTER_PINMUX_PAD3;
 	
 	/* Works upto 1 MHZ with small jumpers. Doesn't work with long jumper wires. 	*/
-	config_spi_master.mode_specific.master.baudrate = 500000;  // 1 MHZ clock.
+	config_spi_master.mode_specific.master.baudrate = 1000000;  // 1 MHZ clock.
 	config_spi_master.transfer_mode = SPI_TRANSFER_MODE_1;  // works with both mode 0 and mode 1
 	config_spi_master.select_slave_low_detect_enable = false;
 

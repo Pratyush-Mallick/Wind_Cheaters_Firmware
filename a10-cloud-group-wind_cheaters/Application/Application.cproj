@@ -37,12 +37,8 @@
           <option id="common.services.freertos.dbg_print" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common.services.basic.sleepmgr" value="Add" config="" content-id="Atmel.ASF" />
           <option id="common2.components.memory.sd_mmc" value="Add" config="spi" content-id="Atmel.ASF" />
-          <option id="common2.services.gfx_mono" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="common2.services.gfx_mono.font" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="common2.services.gfx_mono.menu" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="common2.services.gfx_mono.spinctrl" value="Add" config="" content-id="Atmel.ASF" />
-          <option id="sam0.drivers.adc" value="Add" config="callback" content-id="Atmel.ASF" />
-          <option id="sam0.drivers.dac" value="Add" config="callback" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.sercom.spi_master_vec" value="Add" config="" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.sercom.spi" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.dma" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.drivers.dsu_crc32" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.drivers.events" value="Add" config="hook" content-id="Atmel.ASF" />
@@ -143,7 +139,7 @@
           <file path="src/config/conf_extint.h" framework="" version="" source="common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_extint.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/config/conf_fatfs.h" framework="" version="" source="common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_fatfs.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/config/conf_sd_mmc.h" framework="" version="" source="common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_sd_mmc.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/config/conf_spi.h" framework="" version="" source="common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_spi.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/Config/conf_spi.h" framework="" version="3.44.1" source="sam0\drivers\sercom\spi_master_vec\module-config\conf_spi.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_sw_timer.h" framework="" version="" source="common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_sw_timer.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/config/conf_winc.h" framework="" version="" source="common/components/wifi/winc1500/http_downloader_example/samd21g18a_samw25_xplained_pro/conf_winc.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/common/components/wifi/winc1500/programmer/programmer.h" framework="" version="" source="common/components/wifi/winc1500/programmer/programmer.h" changed="False" content-id="Atmel.ASF" />
@@ -495,36 +491,6 @@
           <file path="src/ASF/sam0/drivers/sercom/i2c/i2c_master_interrupt.h" framework="" version="3.40.0" source="sam0\drivers\sercom\i2c\i2c_master_interrupt.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/sercom/i2c/quick_start_master_callback/qs_i2c_master_callback.h" framework="" version="3.40.0" source="sam0\drivers\sercom\i2c\quick_start_master_callback\qs_i2c_master_callback.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/sercom/i2c/i2c_sam0/i2c_master_interrupt.c" framework="" version="3.40.0" source="sam0\drivers\sercom\i2c\i2c_sam0\i2c_master_interrupt.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/sysfont.c" framework="" version="3.42.0" source="common2\services\gfx_mono\sysfont.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_text.c" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_text.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/docsrc/gfx_mono_overview.png" framework="" version="3.42.0" source="common2\services\gfx_mono\docsrc\gfx_mono_overview.png" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/sysfont.h" framework="" version="3.42.0" source="common2\services\gfx_mono\sysfont.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_text.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_text.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/Config/conf_sysfont.h" framework="" version="3.42.0" source="common2\services\gfx_mono\module_config\conf_sysfont.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_menu.c" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_menu.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_menu.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_menu.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/Config/conf_menu.h" framework="" version="3.42.0" source="common2\services\gfx_mono\module_config\conf_menu.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_spinctrl.c" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_spinctrl.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_spinctrl.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_spinctrl.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/Config/conf_spinctrl.h" framework="" version="3.42.0" source="common2\services\gfx_mono\module_config\conf_spinctrl.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_generic.c" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_generic.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_generic.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_generic.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_framebuffer.c" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_framebuffer.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_framebuffer.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_framebuffer.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/tools/dump_display_over_serial.py" framework="" version="3.42.0" source="common2\services\gfx_mono\tools\dump_display_over_serial.py" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/tools/readme.txt" framework="" version="3.42.0" source="common2\services\gfx_mono\tools\readme.txt" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/tools/bitmap.py" framework="" version="3.42.0" source="common2\services\gfx_mono\tools\bitmap.py" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/adc/adc_callback.h" framework="" version="3.42.0" source="sam0\drivers\adc\adc_callback.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/adc/adc.h" framework="" version="3.42.0" source="sam0\drivers\adc\adc.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/adc/adc_sam_d_r_h/adc.c" framework="" version="3.42.0" source="sam0\drivers\adc\adc_sam_d_r_h\adc.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/adc/adc_sam_d_r_h/adc_callback.c" framework="" version="3.42.0" source="sam0\drivers\adc\adc_sam_d_r_h\adc_callback.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/adc/adc_sam_d_r_h/adc_feature.h" framework="" version="3.42.0" source="sam0\drivers\adc\adc_sam_d_r_h\adc_feature.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/dac/dac.h" framework="" version="3.42.0" source="sam0\drivers\dac\dac.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/dac/dac_callback.h" framework="" version="3.42.0" source="sam0\drivers\dac\dac_callback.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/dac/dac_sam_d_c_h/dac.c" framework="" version="3.42.0" source="sam0\drivers\dac\dac_sam_d_c_h\dac.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/dac/dac_sam_d_c_h/dac_callback.c" framework="" version="3.42.0" source="sam0\drivers\dac\dac_sam_d_c_h\dac_callback.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/sam0/drivers/dac/dac_sam_d_c_h/dac_feature.h" framework="" version="3.42.0" source="sam0\drivers\dac\dac_sam_d_c_h\dac_feature.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/dma/dma.c" framework="" version="3.42.0" source="sam0\drivers\dma\dma.c" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/dma/dma_crc.h" framework="" version="3.42.0" source="sam0\drivers\dma\dma_crc.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/dma/quick_start/qs_dma_basic.h" framework="" version="3.42.0" source="sam0\drivers\dma\quick_start\qs_dma_basic.h" changed="False" content-id="Atmel.ASF" />
@@ -535,11 +501,10 @@
           <file path="src/ASF/sam0/drivers/events/events_hooks.c" framework="" version="3.42.0" source="sam0\drivers\events\events_hooks.c" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/events/events_common.h" framework="" version="3.42.0" source="sam0\drivers\events\events_common.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/sam0/drivers/events/events_hooks.h" framework="" version="3.42.0" source="sam0\drivers\events\events_hooks.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/components/display/ssd1306/ssd1306.c" framework="" version="3.42.0" source="common2\components\display\ssd1306\ssd1306.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/components/display/ssd1306/ssd1306.h" framework="" version="3.42.0" source="common2\components\display\ssd1306\ssd1306.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/Config/conf_ssd1306.h" framework="" version="3.42.0" source="common2\components\display\ssd1306\module_config\conf_ssd1306.h" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_ug_2832hsweg04.c" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_ug_2832hsweg04.c" changed="False" content-id="Atmel.ASF" />
-          <file path="src/ASF/common2/services/gfx_mono/gfx_mono_ug_2832hsweg04.h" framework="" version="3.42.0" source="common2\services\gfx_mono\gfx_mono_ug_2832hsweg04.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/sercom/spi_master_vec/spi_master_vec.c" framework="" version="3.44.1" source="sam0\drivers\sercom\spi_master_vec\spi_master_vec.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/sercom/spi_master_vec/quick_start_basic/qs_spi_master_vec_basic.h" framework="" version="3.44.1" source="sam0\drivers\sercom\spi_master_vec\quick_start_basic\qs_spi_master_vec_basic.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/sercom/spi_master_vec/spi_master_vec.h" framework="" version="3.44.1" source="sam0\drivers\sercom\spi_master_vec\spi_master_vec.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/Config/conf_spi_master_vec.h" framework="" version="3.44.1" source="sam0\drivers\sercom\spi_master_vec\module-config\conf_spi_master_vec.h" changed="False" content-id="Atmel.ASF" />
         </files>
         <documentation help="http://asf.atmel.com/docs/3.40.0/common.components.wifi.winc1500.http_downloader_example.samw25_xplained_pro/html/index.html" />
         <offline-documentation help="" />
@@ -613,10 +578,7 @@
       <Value>TC_ASYNC=true</Value>
       <Value>__FREERTOS__</Value>
       <Value>I2C_MASTER_CALLBACK_MODE=true</Value>
-      <Value>ADC_CALLBACK_MODE=true</Value>
-      <Value>DAC_CALLBACK_MODE=true</Value>
       <Value>EVENTS_INTERRUPT_HOOKS_MODE=true</Value>
-      <Value>GFX_MONO_UG_2832HSWEG04=1</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -677,15 +639,10 @@
       <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r_h</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
-      <Value>../src/ASF/common2/services/gfx_mono</Value>
-      <Value>../src/ASF/sam0/drivers/adc</Value>
-      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
-      <Value>../src/ASF/sam0/drivers/dac</Value>
-      <Value>../src/ASF/sam0/drivers/dac/dac_sam_d_c_h</Value>
       <Value>../src/ASF/sam0/drivers/dma</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_d_r_h</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
+      <Value>../src/ASF/sam0/drivers/sercom/spi_master_vec</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -765,18 +722,13 @@
       <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r_h</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
-      <Value>../src/ASF/common2/services/gfx_mono</Value>
-      <Value>../src/ASF/sam0/drivers/adc</Value>
-      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
-      <Value>../src/ASF/sam0/drivers/dac</Value>
-      <Value>../src/ASF/sam0/drivers/dac/dac_sam_d_c_h</Value>
       <Value>../src/ASF/sam0/drivers/dma</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_d_r_h</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
+      <Value>../src/ASF/sam0/drivers/sercom/spi_master_vec</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMW25_XPLAINED_PRO -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSD_MMC_ENABLE -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTCC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMD21G18A__ -DTC_ASYNC=true -D__FREERTOS__ -DI2C_MASTER_CALLBACK_MODE=true -DADC_CALLBACK_MODE=true -DDAC_CALLBACK_MODE=true -DEVENTS_INTERRUPT_HOOKS_MODE=true -DGFX_MONO_UG_2832HSWEG04=1</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMW25_XPLAINED_PRO -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSD_MMC_ENABLE -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTCC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMD21G18A__ -DTC_ASYNC=true -D__FREERTOS__ -DI2C_MASTER_CALLBACK_MODE=true -DEVENTS_INTERRUPT_HOOKS_MODE=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/iot/http</Value>
@@ -835,15 +787,10 @@
       <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r_h</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
-      <Value>../src/ASF/common2/services/gfx_mono</Value>
-      <Value>../src/ASF/sam0/drivers/adc</Value>
-      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
-      <Value>../src/ASF/sam0/drivers/dac</Value>
-      <Value>../src/ASF/sam0/drivers/dac/dac_sam_d_c_h</Value>
       <Value>../src/ASF/sam0/drivers/dma</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_d_r_h</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
+      <Value>../src/ASF/sam0/drivers/sercom/spi_master_vec</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -874,10 +821,7 @@
       <Value>TC_ASYNC=true</Value>
       <Value>__FREERTOS__</Value>
       <Value>I2C_MASTER_CALLBACK_MODE=true</Value>
-      <Value>ADC_CALLBACK_MODE=true</Value>
-      <Value>DAC_CALLBACK_MODE=true</Value>
       <Value>EVENTS_INTERRUPT_HOOKS_MODE=true</Value>
-      <Value>GFX_MONO_UG_2832HSWEG04=1</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -947,18 +891,14 @@
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/FreeRTOS-Plus-CLI</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/FreeRTOS-Plus-Trace/config</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/FreeRTOS-Plus-Trace/streamports/Jlink_RTT/include</Value>
-      <Value>../src/ASF/common2/services/gfx_mono</Value>
-      <Value>../src/ASF/sam0/drivers/adc</Value>
-      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
-      <Value>../src/ASF/sam0/drivers/dac</Value>
-      <Value>../src/ASF/sam0/drivers/dac/dac_sam_d_c_h</Value>
       <Value>../src/ASF/sam0/drivers/dma</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_d_r_h</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
       <Value>../src/I2cDriver</Value>
+      <Value>../src/ASF/sam0/drivers/sercom/spi_master_vec</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
+  <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
   <armgcc.compiler.optimization.OtherFlags>-fdata-sections</armgcc.compiler.optimization.OtherFlags>
   <armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>True</armgcc.compiler.optimization.PrepareFunctionsForGarbageCollection>
   <armgcc.compiler.optimization.DebugLevel>Maximum (-g3)</armgcc.compiler.optimization.DebugLevel>
@@ -1037,19 +977,14 @@
       <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r_h</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
-      <Value>../src/ASF/common2/services/gfx_mono</Value>
-      <Value>../src/ASF/sam0/drivers/adc</Value>
-      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
-      <Value>../src/ASF/sam0/drivers/dac</Value>
-      <Value>../src/ASF/sam0/drivers/dac/dac_sam_d_c_h</Value>
       <Value>../src/ASF/sam0/drivers/dma</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_d_r_h</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
+      <Value>../src/ASF/sam0/drivers/sercom/spi_master_vec</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMW25_XPLAINED_PRO -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSD_MMC_ENABLE -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTCC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMD21G18A__ -DTC_ASYNC=true -D__FREERTOS__ -DI2C_MASTER_CALLBACK_MODE=true -DADC_CALLBACK_MODE=true -DDAC_CALLBACK_MODE=true -DEVENTS_INTERRUPT_HOOKS_MODE=true -DGFX_MONO_UG_2832HSWEG04=1</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAMW25_XPLAINED_PRO -DEXTINT_CALLBACK_MODE=true -DRTC_CALENDAR_ASYNC=true -DSD_MMC_ENABLE -DSPI_CALLBACK_MODE=true -DSYSTICK_MODE -DTCC_ASYNC=true -DUSART_CALLBACK_MODE=true -D__SAMD21G18A__ -DTC_ASYNC=true -D__FREERTOS__ -DI2C_MASTER_CALLBACK_MODE=true -DEVENTS_INTERRUPT_HOOKS_MODE=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/iot/http</Value>
@@ -1108,15 +1043,10 @@
       <Value>../src/ASF/sam0/drivers/tc/tc_sam_d_r_h</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
       <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
-      <Value>../src/ASF/common2/services/gfx_mono</Value>
-      <Value>../src/ASF/sam0/drivers/adc</Value>
-      <Value>../src/ASF/sam0/drivers/adc/adc_sam_d_r_h</Value>
-      <Value>../src/ASF/sam0/drivers/dac</Value>
-      <Value>../src/ASF/sam0/drivers/dac/dac_sam_d_c_h</Value>
       <Value>../src/ASF/sam0/drivers/dma</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_d_r_h</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/ASF/common2/components/display/ssd1306</Value>
+      <Value>../src/ASF/sam0/drivers/sercom/spi_master_vec</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -1129,16 +1059,11 @@
     <Folder Include="src\ASF\" />
     <Folder Include="src\ASF\common2\" />
     <Folder Include="src\ASF\common2\components\" />
-    <Folder Include="src\ASF\common2\components\display\" />
-    <Folder Include="src\ASF\common2\components\display\ssd1306\" />
     <Folder Include="src\ASF\common2\components\memory\" />
     <Folder Include="src\ASF\common2\components\memory\sd_mmc\" />
     <Folder Include="src\ASF\common2\services\" />
     <Folder Include="src\ASF\common2\services\delay\" />
     <Folder Include="src\ASF\common2\services\delay\sam0\" />
-    <Folder Include="src\ASF\common2\services\gfx_mono\" />
-    <Folder Include="src\ASF\common2\services\gfx_mono\docsrc\" />
-    <Folder Include="src\ASF\common2\services\gfx_mono\tools\" />
     <Folder Include="src\ASF\common\" />
     <Folder Include="src\ASF\common\boards\" />
     <Folder Include="src\ASF\common\components\" />
@@ -1182,10 +1107,6 @@
     <Folder Include="src\ASF\sam0\boards\" />
     <Folder Include="src\ASF\sam0\boards\samw25_xplained_pro\" />
     <Folder Include="src\ASF\sam0\drivers\" />
-    <Folder Include="src\ASF\sam0\drivers\adc\" />
-    <Folder Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\" />
-    <Folder Include="src\ASF\sam0\drivers\dac\" />
-    <Folder Include="src\ASF\sam0\drivers\dac\dac_sam_d_c_h\" />
     <Folder Include="src\ASF\sam0\drivers\dma\" />
     <Folder Include="src\ASF\sam0\drivers\dma\quick_start\" />
     <Folder Include="src\ASF\sam0\drivers\dsu\" />
@@ -1214,6 +1135,8 @@
     <Folder Include="src\ASF\sam0\drivers\sercom\spi\quick_start_master_callback\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\spi\quick_start_slave\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\spi\quick_start_slave_callback\" />
+    <Folder Include="src\ASF\sam0\drivers\sercom\spi_master_vec\" />
+    <Folder Include="src\ASF\sam0\drivers\sercom\spi_master_vec\quick_start_basic\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\usart\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\usart\quick_start\" />
     <Folder Include="src\ASF\sam0\drivers\sercom\usart\quick_start_callback\" />
@@ -1309,17 +1232,12 @@
     <Folder Include="src\I2cDriver" />
     <Folder Include="src\IMU" />
     <Folder Include="src\SpiDriver\" />
+    <Folder Include="src\Stepper_control\" />
     <Folder Include="src\WifiHandlerThread" />
     <Folder Include="src\SerialConsole\" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\docsrc\gfx_mono_overview.png">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\AirVelocity\AirThread.c">
@@ -1334,100 +1252,13 @@
     <Compile Include="src\AirVelocity\FS_3000.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\ASF\common2\components\display\ssd1306\ssd1306.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\components\display\ssd1306\ssd1306.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_framebuffer.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_framebuffer.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_generic.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_generic.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_menu.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_menu.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_spinctrl.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_spinctrl.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_text.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_text.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\gfx_mono_ug_2832hsweg04.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\gfx_mono_ug_2832hsweg04.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\common2\services\gfx_mono\sysfont.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\sysfont.h">
-      <SubType>compile</SubType>
-    </None>
     <Compile Include="src\ASF\common\services\crc32\crc32.c">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="src\ASF\common2\services\gfx_mono\tools\bitmap.py">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\tools\dump_display_over_serial.py">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\common2\services\gfx_mono\tools\readme.txt">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\drivers\sercom\i2c\i2c_master_interrupt.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\drivers\sercom\i2c\quick_start_master_callback\qs_i2c_master_callback.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\adc\adc_callback.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\adc\adc.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\adc.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\adc_callback.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\sam0\drivers\adc\adc_sam_d_r_h\adc_feature.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\dac\dac.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\sam0\drivers\dac\dac_callback.h">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="src\ASF\sam0\drivers\dac\dac_sam_d_c_h\dac.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\sam0\drivers\dac\dac_sam_d_c_h\dac_callback.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <None Include="src\ASF\sam0\drivers\dac\dac_sam_d_c_h\dac_feature.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\ASF\sam0\drivers\dma\dma.c">
@@ -1460,6 +1291,15 @@
     <Compile Include="src\ASF\sam0\drivers\sercom\i2c\i2c_sam0\i2c_master_interrupt.c">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="src\ASF\sam0\drivers\sercom\spi_master_vec\quick_start_basic\qs_spi_master_vec_basic.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\sercom\spi_master_vec\spi_master_vec.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\sam0\drivers\sercom\spi_master_vec\spi_master_vec.h">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="src\BME680\Bme680Thread.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1481,19 +1321,10 @@
     <Compile Include="src\CliThread\CliThread.h">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="src\config\conf_sysfont.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\config\conf_menu.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\config\conf_spinctrl.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\config\conf_dma.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\config\conf_ssd1306.h">
+    <None Include="src\config\conf_spi_master_vec.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\I2cDriver\I2cDriver.c">
@@ -1518,6 +1349,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\SpiDriver\SpiDriver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Stepper_control\A4988_StepperMD.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Stepper_control\A4988_StepperMD.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\WifiHandlerThread\WifiHandler.c">

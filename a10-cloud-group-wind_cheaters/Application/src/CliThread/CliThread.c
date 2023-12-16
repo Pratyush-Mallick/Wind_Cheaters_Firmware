@@ -27,8 +27,6 @@ static const char pcWelcomeMessage[]  = "FreeRTOS CLI.\r\nType Help to view a li
 static const CLI_Command_Definition_t xImuGetCommand = {"imu", "imu: Returns a value from the IMU\r\n", (const pdCOMMAND_LINE_CALLBACK)CLI_GetImuData, 0};
 
 static const CLI_Command_Definition_t xOTAUCommand = {"fw", "fw: Download a file and perform an FW update\r\n", (const pdCOMMAND_LINE_CALLBACK)CLI_OTAU, 0};
-
-static const CLI_Command_Definition_t xResetCommand = {"reset", "reset: Resets the device\r\n", (const pdCOMMAND_LINE_CALLBACK)CLI_ResetDevice, 0};
 	
 static const CLI_Command_Definition_t xAirFlow =
 {
@@ -42,7 +40,7 @@ static const CLI_Command_Definition_t xTempGetCommand =
 {
 	"temp",
 	"temp: Returns a value from the temperature sensor\r\n",
-	CLI_GetTempData,
+	(const pdCOMMAND_LINE_CALLBACK)CLI_GetTempData,
 	0
 };
 
@@ -69,14 +67,8 @@ void vCommandConsoleTask(void *pvParameters)
     FreeRTOS_CLIRegisterCommand(&xOTAUCommand);
     FreeRTOS_CLIRegisterCommand(&xImuGetCommand);
     FreeRTOS_CLIRegisterCommand(&xClearScreen);
-    FreeRTOS_CLIRegisterCommand(&xResetCommand);
-	FreeRTOS_CLIRegisterCommand (&xAirFlow);
-	FreeRTOS_CLIRegisterCommand( &xTempGetCommand );
-    //FreeRTOS_CLIRegisterCommand(&xNeotrellisTurnLEDCommand);
-    //FreeRTOS_CLIRegisterCommand(&xNeotrellisProcessButtonCommand);
-    //FreeRTOS_CLIRegisterCommand(&xDistanceSensorGetDistance);
-    //FreeRTOS_CLIRegisterCommand(&xSendDummyGameData);
-	//FreeRTOS_CLIRegisterCommand(&xI2cScan);
+	FreeRTOS_CLIRegisterCommand(&xAirFlow);
+	FreeRTOS_CLIRegisterCommand(&xTempGetCommand);
 
     char cRxedChar[2];
     unsigned char cInputIndex = 0;
@@ -105,7 +97,7 @@ void vCommandConsoleTask(void *pvParameters)
     for (;;) {
         FreeRTOS_read(&cRxedChar[0]);
 
-        if (cRxedChar[0] == '\n' || cRxedChar[0] == '\r') {
+           if (cRxedChar[0] == '\n' || cRxedChar[0] == '\r') {
             /* A newline character was received, so the input command string is
             complete and can be processed.  Transmit a line separator, just to
             make the output easier to read. */
@@ -265,9 +257,9 @@ BaseType_t CLI_GetTempData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const i
 	vTaskDelay(pdMS_TO_TICKS((uint32_t) 1000));
 	rslt = bme68x_get_data(BME68X_FORCED_MODE, &data[0], &n_fields, &bme);
 	
-	sprintf(pcWriteBuffer, "T: %f H: %f P: %f \n", data[0].temperature, data[0].humidity, data[0].pressure);
+	snprintf(pcWriteBuffer, xWriteBufferLen, "T: %0.2f H: %0.2f P: %0.2f \r\n", data[0].temperature, data[0].humidity, data[0].pressure);
 	
-	 WifiAddBmeDataToQueue(&data);
+    WifiAddBmeDataToQueue(&data);
 	
 	return pdFALSE;
 }
@@ -275,32 +267,23 @@ BaseType_t CLI_GetTempData( int8_t *pcWriteBuffer,size_t xWriteBufferLen,const i
 // Example CLI Command. Reads from the IMU and returns data.
 BaseType_t CLI_GetImuData(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-    int16_t data_raw_acceleration[3];
-    float acceleration_mg[3];
-	struct ImuDataPacket mg_int;
+	static int16_t data_raw_acceleration[3];
+	static struct ImuDataPacket_float mg;
     uint8_t reg;
     stmdev_ctx_t *dev_ctx = GetImuStruct();
 
     /* Read output only if new xl value is available */
-    //lsm6dso_xl_flag_data_ready_get(dev_ctx, &reg);
+    lsm6dso_xl_flag_data_ready_get(dev_ctx, &reg);
 
     //if (reg) {
-    memset(data_raw_acceleration, 0x00, 3 * sizeof(int16_t));
     lsm6dso_acceleration_raw_get(dev_ctx, data_raw_acceleration);
-    acceleration_mg[0] = lsm6dso_from_fs2_to_mg(data_raw_acceleration[0]);
-    acceleration_mg[1] = lsm6dso_from_fs2_to_mg(data_raw_acceleration[1]);
-    acceleration_mg[2] = lsm6dso_from_fs2_to_mg(data_raw_acceleration[2]);
-	
-	mg_int.xmg = (int)acceleration_mg[0];
-	mg_int.ymg = (int)acceleration_mg[0];
-	mg_int.zmg = (int)acceleration_mg[0];
+	mg.xmg = lsm6dso_from_fs2_to_mg(data_raw_acceleration[0]);
+	mg.ymg = lsm6dso_from_fs2_to_mg(data_raw_acceleration[1]);
+	mg.zmg = lsm6dso_from_fs2_to_mg(data_raw_acceleration[2]);
 
-    snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Acceleration [mg]:X %f\tY %f\tZ %f\r\n", (int)acceleration_mg[0], (int)acceleration_mg[1], (int)acceleration_mg[2]);
-    WifiAddImuDataToQueue(&mg_int);
+    snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Acc [mg]: %0.2f %0.2f %0.2f\r\n", mg.xmg, mg.ymg, mg.zmg);
+    WifiAddImuDataToQueue(&mg);
 	
-    //} else {
-        //snprintf((char *)pcWriteBuffer, xWriteBufferLen, "No data ready! \r\n");
-    //}
     return pdFALSE;
 }
 
@@ -320,10 +303,34 @@ BaseType_t xCliClearTerminalScreen(char *pcWriteBuffer, size_t xWriteBufferLen, 
 BaseType_t CLI_OTAU(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
 	char bootloader_flag[] = "0:boot_flag.txt";
+	f_unlink(bootloader_flag);
+	
+	FIL file_object;
+	
+	//bootloader_flag[0] = LUN_ID_SD_MMC_0_MEM + '0';
+	//FRESULT res = f_open(&file_object, (char const *)bootloader_flag, FA_CREATE_ALWAYS | FA_WRITE);
+//
+	//if (res != FR_OK) {
+		//LogMessage(LOG_INFO_LVL, "[FAIL] res %d\r\n", res);
+		//} else {
+		//SerialConsoleWriteString("boot_flag.txt added!\r\n");
+	//}
+	//
+	//WifiHandlerSetState(WIFI_DOWNLOAD_INIT);
+//
+	//const TickType_t xDelay = 20000 / portTICK_PERIOD_MS;
+	//vTaskDelay( xDelay );
+	
+	return pdFALSE;
+}
+
+//void update_fimware(void)
+//{
+	//char bootloader_flag[] = "0:boot_flag.txt";
 	//f_unlink(bootloader_flag);
 	//
 	//FIL file_object;
-	//
+//
 	//bootloader_flag[0] = LUN_ID_SD_MMC_0_MEM + '0';
 	//FRESULT res = f_open(&file_object, (char const *)bootloader_flag, FA_CREATE_ALWAYS | FA_WRITE);
 //
@@ -332,21 +339,14 @@ BaseType_t CLI_OTAU(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t 
 	//} else {
 		//SerialConsoleWriteString("boot_flag.txt added!\r\n");
 	//}
-	
+	//
 	//WifiHandlerSetState(WIFI_DOWNLOAD_INIT);
-	WifiHandlerSetState(WIFI_MQTT_HANDLE);
-
-	vTaskDelay(1000);
-	
-	return pdFALSE;	
-}
-
-// Example CLI Command. Resets system.
-BaseType_t CLI_ResetDevice(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
-{
-    system_reset();
-    return pdFALSE;
-}
+	//
+	//const TickType_t xDelay = 20000 / portTICK_PERIOD_MS;
+	//vTaskDelay( xDelay );
+			//
+	//system_reset();
+//}
 
 /**************************************************************************/ /**
  * @brief    Air Flow Command
@@ -355,12 +355,9 @@ BaseType_t CLI_ResetDevice(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const 
 BaseType_t CLI_AirFlow(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
 	float air_speed = FS3000_readMetersPerSecond();
-	
-	air_speed = 10;
-    sprintf(pcWriteBuffer, "Airflow: %f m/s ", air_speed);
-	
-	 WifiAddAirDataToQueue(&air_speed);
-	
-    //SerialConsoleWriteString(bufCli);
+
+    snprintf(pcWriteBuffer, xWriteBufferLen, "Airflow: %0.2f m/s \r\n", air_speed);
+	WifiAddAirDataToQueue(&air_speed);
+
 	return pdFALSE;
 }

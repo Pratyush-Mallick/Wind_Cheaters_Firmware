@@ -52,10 +52,6 @@
  * running the ASF driver selector tool. Any changes will be discarded.
  */
 
-// From module: ADC - Analog-to-Digital Converter (Callback APIs)
-#include <adc.h>
-#include <adc_callback.h>
-
 // From module: CRC-32 calculation
 #include <crc32.h>
 
@@ -65,10 +61,6 @@
 // From module: Common SAM0 compiler driver
 #include <compiler.h>
 #include <status_codes.h>
-
-// From module: DAC - Digital-to-Analog Converter (Callback APIs)
-#include <dac.h>
-#include <dac_callback.h>
 
 // From module: DMAC - Direct Memory Access Controller
 #include <dma.h>
@@ -99,7 +91,7 @@
 
 // From module: FreeRTOS - kernel 10.0.0
 #include <FreeRTOS.h>
-#include <stack_macros.h>
+#include <StackMacros.h>
 #include <croutine.h>
 #include <deprecated_definitions.h>
 #include <event_groups.h>
@@ -114,18 +106,6 @@
 #include <stream_buffer.h>
 #include <task.h>
 #include <timers.h>
-
-// From module: GFX Monochrome - Menu System
-#include <gfx_mono_menu.h>
-
-// From module: GFX Monochrome - Monochrome Graphic Library
-#include <gfx_mono.h>
-
-// From module: GFX Monochrome - Spinner/Spin control widget
-#include <gfx_mono_spinctrl.h>
-
-// From module: GFX Monochrome - System Font
-#include <sysfont.h>
 
 // From module: Generic board support
 #include <board.h>
@@ -172,12 +152,12 @@
 #include <spi.h>
 #include <spi_interrupt.h>
 
+// From module: SERCOM SPI - Serial Peripheral Interface (Master Mode, Vectored I/O)
+#include <spi_master_vec.h>
+
 // From module: SERCOM USART - Serial Communications (Callback APIs)
 #include <usart.h>
 #include <usart_interrupt.h>
-
-// From module: SSD1306 OLED controller
-#include <ssd1306.h>
 
 // From module: SYSTEM - Clock Management for SAMD21/R21/DA/HA
 #include <clock.h>

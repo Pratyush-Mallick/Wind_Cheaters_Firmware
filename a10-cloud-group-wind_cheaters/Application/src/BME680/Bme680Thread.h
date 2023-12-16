@@ -15,13 +15,13 @@
 #include "main.h"
 #include "WifiHandlerThread/WifiHandler.h"
 #include "BME680/bme68x.h"
+#include "BME680/bme68x_defs.h"
 
 /******************************************************************************
  * Defines
  ******************************************************************************/
-#define IMU_TASK_SIZE     200  //<Size of stack to assign to the UI thread. In words
-#define AIR_TASK_PRIORITY (configMAX_PRIORITIES - 1)
-#define AIR_VOLTAGE_LIMIT 13
+#define BME_TASK_SIZE     200  //<Size of stack to assign to the UI thread. In words
+#define BME_TASK_PRIORITY (configMAX_PRIORITIES - 1)
 
 /******************************************************************************
  * Global Function Declaration
