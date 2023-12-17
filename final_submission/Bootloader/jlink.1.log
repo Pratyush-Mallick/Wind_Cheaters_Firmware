@@ -1,0 +1,9 @@
+T4D70 881:612.771   SEGGER J-Link V7.92q Log File
+T4D70 881:612.805   DLL Compiled: Nov 23 2023 18:03:53
+T4D70 881:612.814   Logging started @ 2023-12-17 01:54
+T4D70 881:612.822   Process: C:\Program Files (x86)\Atmel\Studio\7.0\atbackend\atbackend.exe
+T4D70 881:612.830 - 56.186ms
+T4D70 881:621.478 JLINK_Close()
+T4D70 881:633.342 - 11.863ms
+T4D70 881:633.372   
+T4D70 881:633.380   Closed
